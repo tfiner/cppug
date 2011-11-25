@@ -1,3 +1,7 @@
+// To compile this, make sure you have gcc-46:
+//
+// g++-4 -std=c++0x shr_ptr.cpp -o shr && ./shr
+//
 #include <iostream>
 #include <memory>
 #include <list>
