@@ -15,14 +15,16 @@ namespace cb {
 	class DrawableContainer : public Drawable {
 	public:
 		DrawableContainer();
+        
 		void addDrawable(DrawableP drawable);
 		void removeDrawable(DrawableP drawable);
 		void clearDrawables();
-		void update();
-		void draw();
+		
+        virtual void update();
+		virtual void draw();
 		
 	private:
-		std::list<DrawableP> _drawables;
+		std::list<DrawableP> drawables_;
 	};
 
 }

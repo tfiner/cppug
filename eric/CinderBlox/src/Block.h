@@ -7,9 +7,7 @@
 #include "Drawable.h"
 
 using namespace ci;
-
-// the width and height of a block in pixels
-#define BLOCK_SIZE 20
+using namespace boost;
 
 namespace cb {
 
@@ -18,15 +16,18 @@ namespace cb {
      */
 	class Block : public Drawable {
 	public:
+		// the width and height of a block in pixels
+		static const int BLOCK_SIZE = 20;
+
 		Block(Color color);
 		void setPixelPos(Vec2i pos);
 		virtual void update();
 		virtual void draw();
 	private:
-		Vec2i _pos;
-		Color _color;
+		Vec2i pos_;
+		Color color_;
 	};
 
-	typedef std::shared_ptr<Block> BlockP;
+	typedef shared_ptr<Block> BlockP;
 	
 }

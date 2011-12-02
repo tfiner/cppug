@@ -3,8 +3,8 @@
 
 using namespace cb;
 
-Shape::Shape() {
-		
+Shape::Shape(WellP well) {
+    well_ = well;
 }
 
 void Shape::update() {

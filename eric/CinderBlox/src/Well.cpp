@@ -7,10 +7,6 @@
 using namespace cb;
 using namespace ci;
 
-// how far the well should be drawn from the top left edge of the screen
-#define X_OFFSET 10
-#define Y_OFFSET 10
-
 Well::Well() {
 	
 }
@@ -20,30 +16,35 @@ Well::~Well() {
 }
 
 void Well::addBlock(int row, int col, BlockP block) {
-	// TODO: Throw?
-	if (!isInBounds(row, col)) return;
+	assert (isInBounds(row, col));
 	
 	if (isBlockAt(row, col)) removeBlock(row, col);
 	
-	_blocks[row][col] = block;
-	
+	blocks_[row][col] = block;
 	block->setPixelPos(getPixelPos(row, col));
 	DrawableContainer::addDrawable(block);
 }
 
 bool Well::isBlockAt(int row, int col) {
-	return _blocks[row][col] != 0;
+	assert (isInBounds(row, col));
+	return blocks_[row][col] != 0;
 }
 
 Vec2f Well::getPixelPos(int row, int col) {
+	assert (isInBounds(row, col));
+	
 	// add one pixel border around blocks
-	return Vec2i(col * BLOCK_SIZE + col + X_OFFSET, row * BLOCK_SIZE + row + Y_OFFSET);
+	int x = col * Block::BLOCK_SIZE + col + X_OFFSET;
+	int y = row * Block::BLOCK_SIZE + row + Y_OFFSET;
+	return Vec2i(x, y);
 }
 
 bool Well::isInBounds(int row, int col) {
-	return ((row >= 0) && (row < WELL_ROWS) && (col >= 0) && (col < WELL_COLS));
+	bool rowOk = (row >= 0) && (row < WELL_ROWS);
+	bool colOk = (col >= 0) && (col < WELL_COLS);
+	return rowOk && colOk;
 }
 
 void Well::removeBlock(int row, int col) {
-	DrawableContainer::removeDrawable(_blocks[row][col]);
+	DrawableContainer::removeDrawable(blocks_[row][col]);
 }

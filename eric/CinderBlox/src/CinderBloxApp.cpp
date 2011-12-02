@@ -3,9 +3,10 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Rand.h"
 
-#include "Block.h"
 #include "Drawable.h"
 #include "DrawableContainer.h"
+#include "Block.h"
+#include "Shape.h"
 #include "Well.h"
 
 using namespace ci;
@@ -20,12 +21,12 @@ public:
 	void draw();
 	
 private:
-	WellP _well;
+	WellP well_;
 };
 
 void CinderBloxApp::setup() {
-	_well = WellP(new Well());
-	addDrawable(_well);
+	well_ = WellP(new Well());
+	addDrawable(well_);
 	
 	Rand::randomize();	
 }
@@ -36,14 +37,14 @@ void CinderBloxApp::mouseDown( MouseEvent event ) {
 
 void CinderBloxApp::update() {
     // some test code
-    int row = Rand::randInt(0, WELL_ROWS);
-	int col = Rand::randInt(0, WELL_COLS);
+    int row = Rand::randInt(0, Well::WELL_ROWS);
+	int col = Rand::randInt(0, Well::WELL_COLS);
 	
 	float r = Rand::randFloat();
 	float g = Rand::randFloat();
 	float b = Rand::randFloat();
 	
-	_well->addBlock(row, col, BlockP(new Block(Color(r, g, b))));
+	well_->addBlock(row, col, BlockP(new Block(Color(r, g, b))));
 	
 	DrawableContainer::update();
 }

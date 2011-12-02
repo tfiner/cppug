@@ -9,11 +9,8 @@
 #include "Block.h"
 #include "DrawableContainer.h"
 
-// the size of the well of blocks
-#define WELL_ROWS 21
-#define WELL_COLS 25
-
 using namespace ci;
+using namespace boost;
 
 namespace cb {
 
@@ -22,6 +19,10 @@ namespace cb {
 	 */
 	class Well : public DrawableContainer {
 	public:
+		// the size of the well of blocks
+		static const int WELL_ROWS = 21;
+		static const int WELL_COLS = 25;
+		
 		Well();
 		~Well();
 		
@@ -38,11 +39,15 @@ namespace cb {
 		 */
 		bool isInBounds(int row, int col);
 	private:
-		boost::array<boost::array<BlockP, WELL_COLS>, WELL_ROWS> _blocks;
+		// how far the well should be drawn from the top left edge of the screen
+		static const int X_OFFSET = 10;
+		static const int Y_OFFSET = 10;
+				
+		array<array<BlockP, WELL_COLS>, WELL_ROWS> blocks_;
 		
 		void removeBlock(int row, int col);
 	};
 
-	typedef std::shared_ptr<Well> WellP;
+	typedef shared_ptr<Well> WellP;
 	
 }

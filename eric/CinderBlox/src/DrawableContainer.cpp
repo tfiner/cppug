@@ -7,28 +7,28 @@ DrawableContainer::DrawableContainer() {
 }
 
 void DrawableContainer::addDrawable(DrawableP drawable) {
-	_drawables.push_back(drawable);
+	drawables_.push_back(drawable);
 }
 
 void DrawableContainer::removeDrawable(DrawableP drawable) {
-	_drawables.remove(drawable);
+	drawables_.remove(drawable);
 }
 
 void DrawableContainer::clearDrawables() {
-	_drawables.clear();
+	drawables_.clear();
 }
 
 void DrawableContainer::update() {
-	std::list<DrawableP>::iterator i = _drawables.begin();
-	while (i != _drawables.end()) {
+	std::list<DrawableP>::iterator i = drawables_.begin();
+	while (i != drawables_.end()) {
 		(*i)->update();
 		++i;
 	}
 }
 
 void DrawableContainer::draw() {
-	std::list<DrawableP>::iterator i = _drawables.begin();
-	while (i != _drawables.end()) {
+	std::list<DrawableP>::iterator i = drawables_.begin();
+	while (i != drawables_.end()) {
 		(*i)->draw();
 		++i;
 	}

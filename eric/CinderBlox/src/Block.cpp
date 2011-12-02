@@ -6,11 +6,11 @@
 using namespace cb;
 
 Block::Block(Color color) {
-	_color = color;
+	color_ = color;
 }
 
 void Block::setPixelPos(ci::Vec2i pos) {
-	_pos = pos;
+	pos_ = pos;
 }
 
 void Block::update() {
@@ -18,6 +18,6 @@ void Block::update() {
 }
 
 void Block::draw() {
-	gl::color(_color);
-	gl::drawSolidRect(Rectf(_pos, _pos + Vec2f(BLOCK_SIZE, BLOCK_SIZE)));
+	gl::color(color_);
+	gl::drawSolidRect(Rectf(pos_, pos_ + Vec2f(BLOCK_SIZE, BLOCK_SIZE)));
 }

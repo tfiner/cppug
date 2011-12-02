@@ -3,6 +3,8 @@
 
 #include "cinder/Cinder.h"
 
+using namespace boost;
+
 namespace cb {
 	
 	/**
@@ -14,6 +16,6 @@ namespace cb {
 		virtual void draw() = 0;
 	};
 
-	typedef std::shared_ptr<Drawable> DrawableP;
+	typedef shared_ptr<Drawable> DrawableP;
 
 }
