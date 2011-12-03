@@ -9,10 +9,12 @@
 using namespace cb;
 using namespace ci;
 
-Shape::Shape(WellP well) {
-    well_ = well;
-    row_ = 0;
-    col_ = 0;
+Shape::Shape(WellP well):
+well_(well),
+row_(0),
+col_(0)
+{
+    
 }
 
 ShapeP Shape::getRandomShape(WellP well) {
@@ -33,10 +35,8 @@ ShapeP Shape::getShape(ShapeType type, WellP well) {
 }
 
 void Shape::init() {
-    blocks_ = BlockPVV();
-    
     for (int i = 0; i < getSize(); i++) {
-        blocks_.push_back(BlockPV(getSize()));
+        blocks_.push_back(ShapeBlockPV(getSize()));
     }
     
     build();
@@ -51,7 +51,7 @@ ShapeI::ShapeI(WellP well)
     
 }
 
-int ShapeI::getSize() {
+const int ShapeI::getSize() {
     return 4;
 }
 

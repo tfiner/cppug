@@ -12,8 +12,6 @@ namespace cb {
 
     class Block;
     typedef boost::shared_ptr<Block> BlockP;
-    typedef std::vector<BlockP> BlockPV;
-    typedef std::vector<BlockPV> BlockPVV;
     
     class Well;
     typedef boost::shared_ptr<Well> WellP;
@@ -50,13 +48,16 @@ namespace cb {
 		int row_, col_;
 		
         // the blocks that make up the shape
-        BlockPVV blocks_;
+        typedef std::vector<BlockP> ShapeBlockPV;
+        typedef std::vector<ShapeBlockPV> ShapeBlockPVV;
+
+        ShapeBlockPVV blocks_;
 
     private:
         void init();
         
         // used to allocate memory for blocks_. each shape is square.
-        virtual int getSize() = 0;
+        virtual const int getSize() = 0;
         
         // build the array of blocks
         virtual void build() = 0;
@@ -73,7 +74,7 @@ namespace cb {
     public:
         ShapeI(WellP well);
     private:
-        virtual int getSize();
+        virtual const int getSize();
         virtual void build();
     };
     

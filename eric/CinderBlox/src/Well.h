@@ -20,7 +20,7 @@ namespace cb {
 		// the size of the well of blocks
 		static const int WELL_ROWS = 21;
 		static const int WELL_COLS = 25;
-		
+        
 		/**
 		 * Returns the upper left pixel position for a grid position
 		 */
@@ -38,8 +38,12 @@ namespace cb {
 		// how far the well should be drawn from the top left edge of the screen
 		static const int X_OFFSET = 10;
 		static const int Y_OFFSET = 10;
-				
-        boost::array<boost::array<BlockP, WELL_COLS>, WELL_ROWS> blocks_;
+        
+        // the well of blocks
+        typedef boost::array<BlockP, WELL_COLS> WellBlockPA;
+        typedef boost::array<WellBlockPA, WELL_ROWS> WellBlockPAA;
+        
+        WellBlockPAA blocks_;
 		
 		void removeBlock(int row, int col);
 	};

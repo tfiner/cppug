@@ -8,8 +8,10 @@ using namespace cb;
 using namespace ci;
 using namespace gl;
 
-Block::Block(Color color) {
-	color_ = color;
+Block::Block(Color color):
+color_(color)
+{
+    
 }
 
 void Block::setPixelPos(ci::Vec2i pos) {
