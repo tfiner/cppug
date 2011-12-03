@@ -1,19 +1,13 @@
 
 #include "Well.h"
 
+#include "Block.h"
+
 #include "cinder/gl/gl.h"
 #include "cinder/Vector.h"
 
 using namespace cb;
 using namespace ci;
-
-Well::Well() {
-	
-}
-
-Well::~Well() {
-
-}
 
 void Well::addBlock(int row, int col, BlockP block) {
 	assert (isInBounds(row, col));

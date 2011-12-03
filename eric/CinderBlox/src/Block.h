@@ -1,13 +1,10 @@
 
 #pragma once
 
-#include "cinder/gl/gl.h"
-#include "cinder/Vector.h"
-
 #include "Drawable.h"
 
-using namespace ci;
-using namespace boost;
+#include "cinder/gl/gl.h"
+#include "cinder/Vector.h"
 
 namespace cb {
 
@@ -19,15 +16,18 @@ namespace cb {
 		// the width and height of a block in pixels
 		static const int BLOCK_SIZE = 20;
 
-		Block(Color color);
-		void setPixelPos(Vec2i pos);
+		Block(ci::Color color);
+        virtual ~Block() {}
+        
+		void setPixelPos(ci::Vec2i pos);
+        
 		virtual void update();
 		virtual void draw();
 	private:
-		Vec2i pos_;
-		Color color_;
+        ci::Vec2i pos_;
+        ci::Color color_;
 	};
 
-	typedef shared_ptr<Block> BlockP;
+	typedef boost::shared_ptr<Block> BlockP;
 	
 }

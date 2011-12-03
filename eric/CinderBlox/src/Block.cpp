@@ -3,7 +3,10 @@
 
 #include "cinder/Rect.h"
 
+using namespace boost;
 using namespace cb;
+using namespace ci;
+using namespace gl;
 
 Block::Block(Color color) {
 	color_ = color;
@@ -18,6 +21,6 @@ void Block::update() {
 }
 
 void Block::draw() {
-	gl::color(color_);
-	gl::drawSolidRect(Rectf(pos_, pos_ + Vec2f(BLOCK_SIZE, BLOCK_SIZE)));
+	color(color_);
+	drawSolidRect(Rectf(pos_, pos_ + Vec2f(BLOCK_SIZE, BLOCK_SIZE)));
 }

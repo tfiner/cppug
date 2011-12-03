@@ -14,7 +14,7 @@ namespace cb {
 	 */
 	class DrawableContainer : public Drawable {
 	public:
-		DrawableContainer();
+        virtual ~DrawableContainer() {}
         
 		void addDrawable(DrawableP drawable);
 		void removeDrawable(DrawableP drawable);

@@ -3,9 +3,6 @@
 
 using namespace cb;
 
-DrawableContainer::DrawableContainer() {
-}
-
 void DrawableContainer::addDrawable(DrawableP drawable) {
 	drawables_.push_back(drawable);
 }

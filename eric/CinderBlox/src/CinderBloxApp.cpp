@@ -27,7 +27,10 @@ private:
 void CinderBloxApp::setup() {
 	well_ = WellP(new Well());
 	addDrawable(well_);
-	
+
+    ShapeP shape = Shape::getRandomShape(well_);
+    addDrawable(shape);
+    
 	Rand::randomize();	
 }
 
@@ -37,15 +40,16 @@ void CinderBloxApp::mouseDown( MouseEvent event ) {
 
 void CinderBloxApp::update() {
     // some test code
-    int row = Rand::randInt(0, Well::WELL_ROWS);
-	int col = Rand::randInt(0, Well::WELL_COLS);
-	
-	float r = Rand::randFloat();
-	float g = Rand::randFloat();
-	float b = Rand::randFloat();
-	
-	well_->addBlock(row, col, BlockP(new Block(Color(r, g, b))));
-	
+    
+//    int row = Rand::randInt(0, Well::WELL_ROWS);
+//	int col = Rand::randInt(0, Well::WELL_COLS);
+//	
+//	float r = Rand::randFloat();
+//	float g = Rand::randFloat();
+//	float b = Rand::randFloat();
+//	
+//	well_->addBlock(row, col, BlockP(new Block(Color(r, g, b))));
+    
 	DrawableContainer::update();
 }
 
