@@ -3,6 +3,8 @@
 
 #include "DrawableContainer.h"
 
+#include "cinder/Vector.h"
+
 #include <vector>
 
 namespace cb {
@@ -20,12 +22,12 @@ namespace cb {
      * Shape types
      */
     enum ShapeType {
-        SHAPE_I
-//        SHAPE_O,
-//        SHAPE_T,
-//        SHAPE_J,
-//        SHAPE_L,
-//        SHAPE_Z,
+        SHAPE_I,
+        SHAPE_O,
+        SHAPE_T,
+        SHAPE_J,
+        SHAPE_L
+//        SHAPE_Z
 //        SHAPE_S
     };
     
@@ -38,6 +40,8 @@ namespace cb {
         
         static ShapeP getRandomShape(WellP well);
         static ShapeP getShape(ShapeType type, WellP well);
+        
+        void setGridPos(ci::Vec2i gridPos);
 
     protected:
         Shape(WellP well);
@@ -45,7 +49,7 @@ namespace cb {
         WellP well_;
         
         // the upper left corner of the shape within the Well
-		int row_, col_;
+        ci::Vec2i gridPos_;
 		
         // the blocks that make up the shape
         typedef std::vector<BlockP> ShapeBlockPV;
@@ -77,5 +81,60 @@ namespace cb {
         virtual const int getSize();
         virtual void build();
     };
+
+    /**
+     * The "O" shape
+     * xx
+     * xx
+     */
+    class ShapeO : public Shape {
+    public:
+        ShapeO(WellP well);
+    private:
+        virtual const int getSize();
+        virtual void build();
+    };
+
+    /**
+     * The "T" shape
+     * xxx
+     * .x.
+     * ...
+     */
+    class ShapeT : public Shape {
+    public:
+        ShapeT(WellP well);
+    private:
+        virtual const int getSize();
+        virtual void build();
+    };
+
+    /**
+     * The "J" shape
+     * .x.
+     * .x.
+     * xx.
+     */
+    class ShapeJ : public Shape {
+    public:
+        ShapeJ(WellP well);
+    private:
+        virtual const int getSize();
+        virtual void build();
+    };
     
+    /**
+     * The "L" shape
+     * .x.
+     * .x.
+     * .xx
+     */
+    class ShapeL : public Shape {
+    public:
+        ShapeL(WellP well);
+    private:
+        virtual const int getSize();
+        virtual void build();
+    };
+
 }

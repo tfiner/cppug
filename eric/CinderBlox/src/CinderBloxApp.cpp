@@ -28,8 +28,13 @@ void CinderBloxApp::setup() {
 	well_ = WellP(new Well());
 	addDrawable(well_);
 
-    ShapeP shape = Shape::getRandomShape(well_);
-    addDrawable(shape);
+    // some test code
+    for (int i = 0; i < 5; ++i) {
+        ShapeType type = (ShapeType)i;
+        ShapeP shape = Shape::getShape(type, well_);
+        shape->setGridPos(Vec2i(i * 4, 0));
+        addDrawable(shape);
+    }
     
 	Rand::randomize();	
 }

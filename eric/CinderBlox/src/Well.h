@@ -24,15 +24,15 @@ namespace cb {
 		/**
 		 * Returns the upper left pixel position for a grid position
 		 */
-        static ci::Vec2f getPixelPos(int row, int col);
+        static ci::Vec2f getPixelPos(ci::Vec2i gridPos);
         
 		/**
 		 * Returns true if the row and column are within the well
 		 */
-		static bool isInBounds(int row, int col);
+		static bool isInBounds(ci::Vec2i gridPos);
 
-		void addBlock(int row, int col, BlockP block);
-		bool isBlockAt(int row, int col);
+		void addBlock(ci::Vec2i gridPos, BlockP block);
+		bool isBlockAt(ci::Vec2i gridPos);
 		
 	private:
 		// how far the well should be drawn from the top left edge of the screen
@@ -45,7 +45,7 @@ namespace cb {
         
         WellBlockPAA blocks_;
 		
-		void removeBlock(int row, int col);
+		void removeBlock(ci::Vec2i gridPos);
 	};
 
 	typedef boost::shared_ptr<Well> WellP;
