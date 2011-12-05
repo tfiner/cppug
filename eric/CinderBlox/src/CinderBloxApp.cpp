@@ -29,7 +29,7 @@ void CinderBloxApp::setup() {
 	addDrawable(well_);
 
     // some test code
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 7; ++i) {
         ShapeType type = (ShapeType)i;
         ShapeP shape = Shape::getShape(type, well_);
         shape->setGridPos(Vec2i(i * 4, 0));

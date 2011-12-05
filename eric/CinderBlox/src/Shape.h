@@ -4,6 +4,7 @@
 #include "DrawableContainer.h"
 
 #include "cinder/Vector.h"
+#include "cinder/gl/gl.h"
 
 #include <vector>
 
@@ -26,9 +27,9 @@ namespace cb {
         SHAPE_O,
         SHAPE_T,
         SHAPE_J,
-        SHAPE_L
-//        SHAPE_Z
-//        SHAPE_S
+        SHAPE_L,
+        SHAPE_Z,
+        SHAPE_S
     };
     
     /**
@@ -44,26 +45,31 @@ namespace cb {
         void setGridPos(ci::Vec2i gridPos);
 
     protected:
-        Shape(WellP well);
+        Shape(WellP well, int size, ci::Color color);
         
+        // the well into which we will place our blocks
         WellP well_;
         
         // the upper left corner of the shape within the Well
         ci::Vec2i gridPos_;
 		
         // the blocks that make up the shape
-        typedef std::vector<BlockP> ShapeBlockPV;
-        typedef std::vector<ShapeBlockPV> ShapeBlockPVV;
+        typedef std::vector<BlockP> ShapeRow;
+        typedef std::vector<ShapeRow> ShapeGrid;
 
-        ShapeBlockPVV blocks_;
-
+        ShapeGrid blocks_;
+        
+        // the width and height of the grid of blocks
+        int size_;
+        
+        // the color to draw each block
+        ci::Color color_;
+        
     private:
+        // used by static factory methods to build the shape
         void init();
         
-        // used to allocate memory for blocks_. each shape is square.
-        virtual const int getSize() = 0;
-        
-        // build the array of blocks
+        // put the blocks into the shape
         virtual void build() = 0;
 	};
 
@@ -78,7 +84,6 @@ namespace cb {
     public:
         ShapeI(WellP well);
     private:
-        virtual const int getSize();
         virtual void build();
     };
 
@@ -91,7 +96,6 @@ namespace cb {
     public:
         ShapeO(WellP well);
     private:
-        virtual const int getSize();
         virtual void build();
     };
 
@@ -105,7 +109,6 @@ namespace cb {
     public:
         ShapeT(WellP well);
     private:
-        virtual const int getSize();
         virtual void build();
     };
 
@@ -119,7 +122,6 @@ namespace cb {
     public:
         ShapeJ(WellP well);
     private:
-        virtual const int getSize();
         virtual void build();
     };
     
@@ -133,7 +135,32 @@ namespace cb {
     public:
         ShapeL(WellP well);
     private:
-        virtual const int getSize();
+        virtual void build();
+    };
+
+    /**
+     * The "Z" shape
+     * xx.
+     * .xx
+     * ...
+     */
+    class ShapeZ : public Shape {
+    public:
+        ShapeZ(WellP well);
+    private:
+        virtual void build();
+    };
+
+    /**
+     * The "S" shape
+     * .xx
+     * xx.
+     * ...
+     */
+    class ShapeS : public Shape {
+    public:
+        ShapeS(WellP well);
+    private:
         virtual void build();
     };
 

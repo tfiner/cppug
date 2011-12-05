@@ -19,7 +19,7 @@ namespace cb {
 	public:
 		// the size of the well of blocks
 		static const int WELL_ROWS = 21;
-		static const int WELL_COLS = 25;
+		static const int WELL_COLS = 30;
         
 		/**
 		 * Returns the upper left pixel position for a grid position
