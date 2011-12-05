@@ -9,6 +9,8 @@
 #include "Shape.h"
 #include "Well.h"
 
+#include <list>
+
 using namespace ci;
 using namespace ci::app;
 using namespace cb;
@@ -22,6 +24,8 @@ public:
 	
 private:
 	WellP well_;
+    std::list<ShapeP> shapes_;
+    double rotated_;
 };
 
 void CinderBloxApp::setup() {
@@ -34,7 +38,11 @@ void CinderBloxApp::setup() {
         ShapeP shape = Shape::getShape(type, well_);
         shape->setGridPos(Vec2i(i * 4, 0));
         addDrawable(shape);
+        shapes_.push_back(shape);
+        shape->rotateLeft();
     }
+    
+    rotated_ = 0;
     
 	Rand::randomize();	
 }
@@ -54,6 +62,16 @@ void CinderBloxApp::update() {
 //	float b = Rand::randFloat();
 //	
 //	well_->addBlock(row, col, BlockP(new Block(Color(r, g, b))));
+    
+    if ((int)getElapsedSeconds() > rotated_) {
+        rotated_ = getElapsedSeconds();
+            
+        std::list<ShapeP>::iterator i = shapes_.begin();
+        while (i != shapes_.end()) {
+            (*i)->rotateLeft();
+            ++i;
+        }
+    }
     
 	DrawableContainer::update();
 }

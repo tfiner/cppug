@@ -62,25 +62,65 @@ ShapeP Shape::getShape(ShapeType type, WellP well) {
 }
 
 void Shape::init() {
-    for (int i = 0; i < size_; i++) {
+    for (int y = 0; y < size_; ++y) {
         blocks_.push_back(ShapeRow(size_));
     }
     
     build();
+    updatePixelPos();
 }
 
 void Shape::setGridPos(ci::Vec2i gridPos) {
     gridPos_ = gridPos;
-    
-    // since the shape has moved on the grid we need to update the pixel position of each block
+    updatePixelPos();
+}
+
+void Shape::updatePixelPos() {
     for (int y = 0; y < size_; ++y) {
         for (int x = 0; x < size_; ++x) {
             BlockP block = blocks_[y][x];
             if (block) {
-                blocks_[y][x]->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, y)));
+                block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, y)));
             }
         }
     }
+}
+
+void Shape::rotateLeft() {
+    // iterate through the "rings" of the shape, not including any 1x1 rings.
+    // the size - ring - 1 bit basically makes sure we are not past or at the midpoint.
+    for (int ring = 0; ring < size_ - ring - 1; ++ring) {
+        
+        // now, within a given ring, we will iterate over each cell
+        // comments below based on this example, assuming ring == 0:
+        //  A B C D
+        //  E F G H
+        //  I J K L
+        //  M N O P
+        for (int pos = 0 + ring; pos < size_ - ring - 1; ++pos) {
+            int left = ring;
+            int top = left;
+            int right = size_ - ring - 1;
+            int bottom = right;
+            
+            // hold A
+            BlockP temp = blocks_[top][left + pos];
+            
+            // put D into A
+            blocks_[top][left + pos] = blocks_[top + pos][right];
+            
+            // put P into D
+            blocks_[top + pos][right] = blocks_[bottom][right - pos];
+            
+            // put M into P
+            blocks_[bottom][right - pos] = blocks_[bottom - pos][left];
+            
+            // put A (held) into M
+            blocks_[bottom - pos][left] = temp;
+        }
+    }
+    
+    updatePixelPos();
 }
 
 //////
@@ -94,9 +134,8 @@ Shape(well, 4, Color(0.98f, 0.51f, 0.84f)) {
 
 void ShapeI::build() {
     // a column of four blocks
-    for (int y = 0; y < size_; y++) {
+    for (int y = 0; y < size_; ++y) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(1, y)));
         blocks_[y][1] = block;
         addDrawable(block);
     }   
@@ -113,10 +152,9 @@ Shape(well, 2, Color(0.84f, 1.0f, 0.5f)) {
 
 void ShapeO::build() {
     // two by two blocks
-    for (int y = 0; y < size_; y++) {
-        for (int x = 0; x < size_; x++) {
+    for (int y = 0; y < size_; ++y) {
+        for (int x = 0; x < size_; ++x) {
             BlockP block(new Block(color_));
-            block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, y)));
             blocks_[y][x] = block;
             addDrawable(block);  
         }
@@ -134,17 +172,15 @@ Shape(well, 3, Color(0.53f, 1.0f, 0.84f)) {
 
 void ShapeT::build() {
     // a row of three blocks
-    for (int x = 0; x < size_; x++) {
+    for (int x = 0; x < size_; ++x) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, 0)));
-        blocks_[0][x] = block;
+        blocks_[1][x] = block;
         addDrawable(block);            
     }
     
     // one block in the middle of the second row
     BlockP block(new Block(color_));
-    block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(1, 1)));
-    blocks_[1][1] = block;
+    blocks_[2][1] = block;
     addDrawable(block);            
 }
 
@@ -159,16 +195,14 @@ Shape(well, 3, Color(0.83f, 0.48f, 0.99f)) {
 
 void ShapeJ::build() {
     // a column of three blocks
-    for (int y = 0; y < size_; y++) {
+    for (int y = 0; y < size_; ++y) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(1, y)));
         blocks_[y][1] = block;
         addDrawable(block);            
     }
     
     // one block in the front of the third row
     BlockP block(new Block(color_));
-    block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(0, 2)));
     blocks_[2][0] = block;
     addDrawable(block);            
 }
@@ -184,16 +218,14 @@ Shape(well, 3, Color(0.51f, 1.0f, 0.49f)) {
 
 void ShapeL::build() {
     // a column of three blocks
-    for (int y = 0; y < size_; y++) {
+    for (int y = 0; y < size_; ++y) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(1, y)));
         blocks_[y][1] = block;
         addDrawable(block);            
     }
     
     // one block in the front of the third row
     BlockP block(new Block(color_));
-    block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(2, 2)));
     blocks_[2][2] = block;
     addDrawable(block);            
 }
@@ -209,17 +241,15 @@ Shape(well, 3, Color(0.24f, 0.57f, 0.99f)) {
 
 void ShapeZ::build() {
     // a row of two blocks
-    for (int x = 0; x < size_ - 1; x++) {
+    for (int x = 0; x < size_ - 1; ++x) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, 0)));
         blocks_[0][x] = block;
         addDrawable(block);            
     }
     
     // another row of two blocks
-    for (int x = 1; x < size_; x++) {
+    for (int x = 1; x < size_; ++x) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, 1)));
         blocks_[1][x] = block;
         addDrawable(block);            
     }
@@ -236,17 +266,15 @@ Shape(well, 3, Color(0.58f, 0.0f, 0.99f)) {
 
 void ShapeS::build() {
     // a row of two blocks
-    for (int x = 1; x < size_; x++) {
+    for (int x = 1; x < size_; ++x) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, 0)));
         blocks_[0][x] = block;
         addDrawable(block);            
     }
     
     // another row of two blocks
-    for (int x = 0; x < size_ - 1; x++) {
+    for (int x = 0; x < size_ - 1; ++x) {
         BlockP block(new Block(color_));
-        block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, 1)));
         blocks_[1][x] = block;
         addDrawable(block);            
     }

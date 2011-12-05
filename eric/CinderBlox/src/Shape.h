@@ -43,6 +43,8 @@ namespace cb {
         static ShapeP getShape(ShapeType type, WellP well);
         
         void setGridPos(ci::Vec2i gridPos);
+        
+        void rotateLeft();
 
     protected:
         Shape(WellP well, int size, ci::Color color);
@@ -68,6 +70,9 @@ namespace cb {
     private:
         // used by static factory methods to build the shape
         void init();
+        
+        // make sure the pixel position is up to date with the grid position of each block
+        void updatePixelPos();
         
         // put the blocks into the shape
         virtual void build() = 0;
