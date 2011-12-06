@@ -45,6 +45,7 @@ namespace cb {
         void setGridPos(ci::Vec2i gridPos);
         
         void rotateLeft();
+        void rotateRight();
 
     protected:
         Shape(WellP well, int size, ci::Color color);
@@ -68,6 +69,9 @@ namespace cb {
         ci::Color color_;
         
     private:
+        // actual rotation logic
+        void rotate(bool isLeft);
+        
         // used by static factory methods to build the shape
         void init();
         

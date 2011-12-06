@@ -68,7 +68,11 @@ void CinderBloxApp::update() {
             
         std::list<ShapeP>::iterator i = shapes_.begin();
         while (i != shapes_.end()) {
-            (*i)->rotateLeft();
+            if ((int)getElapsedSeconds() % 2 == 0) {
+                (*i)->rotateRight();
+            } else {
+                (*i)->rotateLeft();
+            }
             ++i;
         }
     }

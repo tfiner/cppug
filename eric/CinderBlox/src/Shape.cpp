@@ -87,36 +87,66 @@ void Shape::updatePixelPos() {
 }
 
 void Shape::rotateLeft() {
+    rotate(true);
+}
+
+void Shape::rotateRight() {
+    rotate(false);
+}
+
+void Shape::rotate(bool isLeft) {
     // iterate through the "rings" of the shape, not including any 1x1 rings.
     // the size - ring - 1 bit basically makes sure we are not past or at the midpoint.
     for (int ring = 0; ring < size_ - ring - 1; ++ring) {
         
-        // now, within a given ring, we will iterate over each cell
-        // comments below based on this example, assuming ring == 0:
-        //  A B C D
-        //  E F G H
-        //  I J K L
-        //  M N O P
+        // now, within a given ring, we will iterate over each cell.
+        //
+        // this example shows how we would move the outer ring of a 4x4 block left.
+        // for each iteration, A is stored in a temp variable, B is moved into A,
+        // C is moved into B, D is moved into C and the temp variable is put into D.
+        //
+        //  A . . B   . A . .   . . A .
+        //  . . . .   . . . B   D . . .  
+        //  . . . .   D . . .   . . . B
+        //  D . . C   . . C .   . C . .
+        //
         for (int pos = 0 + ring; pos < size_ - ring - 1; ++pos) {
             int left = ring;
             int top = left;
             int right = size_ - ring - 1;
             int bottom = right;
             
-            // hold A
-            BlockP temp = blocks_[top][left + pos];
-            
-            // put D into A
-            blocks_[top][left + pos] = blocks_[top + pos][right];
-            
-            // put P into D
-            blocks_[top + pos][right] = blocks_[bottom][right - pos];
-            
-            // put M into P
-            blocks_[bottom][right - pos] = blocks_[bottom - pos][left];
-            
-            // put A (held) into M
-            blocks_[bottom - pos][left] = temp;
+            if (isLeft) {
+                // hold A
+                BlockP temp = blocks_[top][left + pos];
+                
+                // put B into A
+                blocks_[top][left + pos] = blocks_[top + pos][right];
+                
+                // put C into B
+                blocks_[top + pos][right] = blocks_[bottom][right - pos];
+                
+                // put D into C
+                blocks_[bottom][right - pos] = blocks_[bottom - pos][left];
+                
+                // put original A (held) into D
+                blocks_[bottom - pos][left] = temp;
+            } else {
+                // hold B
+                BlockP temp = blocks_[top + pos][right];
+                
+                // put A into B
+                blocks_[top + pos][right] = blocks_[top][left + pos];
+                
+                // put D into A
+                blocks_[top][left + pos] = blocks_[bottom - pos][left];
+                
+                // put C into D
+                blocks_[bottom - pos][left] = blocks_[bottom][right - pos];
+                
+                // put original B (held) into C
+                blocks_[bottom][right - pos] = temp;
+            }
         }
     }
     
