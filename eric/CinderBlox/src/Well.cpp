@@ -24,6 +24,13 @@ bool Well::isBlockAt(Vec2i gridPos) {
 	return blocks_[gridPos.y][gridPos.x] != 0;
 }
 
+void Well::clearBlocks() {
+	DrawableContainer::clearDrawables();
+	
+	// TODO: clear array
+	
+}
+
 Vec2f Well::getPixelPos(Vec2i gridPos) {
 	assert (isInBounds(gridPos));
 	

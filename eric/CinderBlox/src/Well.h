@@ -33,6 +33,7 @@ namespace cb {
 
 		void addBlock(ci::Vec2i gridPos, BlockP block);
 		bool isBlockAt(ci::Vec2i gridPos);
+		void clearBlocks();
 		
 	private:
 		// how far the well should be drawn from the top left edge of the screen

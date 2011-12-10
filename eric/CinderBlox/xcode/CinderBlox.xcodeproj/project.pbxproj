@@ -23,6 +23,7 @@
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		53E3CDFC0E86099300238D2B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E3CDFB0E86099300238D2B /* Carbon.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		EC11E49F1492B46A0078F07F /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC11E49D1492B46A0078F07F /* Game.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,8 @@
 		53E3CDFB0E86099300238D2B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* CinderBlox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CinderBlox.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC11E49D1492B46A0078F07F /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../src/Game.cpp; sourceTree = SOURCE_ROOT; };
+		EC11E49E1492B46A0078F07F /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../src/Game.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +82,8 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				EC11E49E1492B46A0078F07F /* Game.h */,
+				EC11E49D1492B46A0078F07F /* Game.cpp */,
 				07BF0298148414D8002BDAFF /* Block.h */,
 				07BF0297148414D8002BDAFF /* Block.cpp */,
 				00BAE6590E7ED9C10018A608 /* CinderBloxApp.cpp */,
@@ -232,6 +237,7 @@
 				07BF02A1148414D8002BDAFF /* DrawableContainer.cpp in Sources */,
 				07BF02A2148414D8002BDAFF /* Shape.cpp in Sources */,
 				07BF02A3148414D8002BDAFF /* Well.cpp in Sources */,
+				EC11E49F1492B46A0078F07F /* Game.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
