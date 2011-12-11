@@ -15,10 +15,10 @@ using namespace ci;
 //////////
 
 Shape::Shape(WellP well, int size, Color color):
-well_(well),
-size_(size),
-color_(color),
-gridPos_(0, 0)
+    well_(well),
+    size_(size),
+    color_(color),
+    gridPos_(0, 0)
 {
     
 }
@@ -68,6 +68,10 @@ void Shape::init() {
     
     build();
     updatePixelPos();
+}
+
+ci::Vec2i Shape::getGridPos() {
+    return gridPos_;
 }
 
 void Shape::setGridPos(ci::Vec2i gridPos) {

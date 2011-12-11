@@ -9,7 +9,7 @@ using namespace ci;
 using namespace gl;
 
 Block::Block(Color color):
-color_(color)
+    color_(color)
 {
     
 }

@@ -4,17 +4,21 @@
 #include "Shape.h"
 #include "Well.h"
 
-#include <Timer.h>
+#include "cinder/Timer.h"
+#include "cinder/Vector.h"
 
 using namespace cb;
+using namespace ci;
 
 GameP Game::INSTANCE;
 
 Game::Game():
-gamePhase_(PHASE_OVER),
-activeGameState_(STATE_NEXT_SHAPE),
-level_(1),
-well_(new Well())
+    gamePhase_(PHASE_OVER),
+    activeGameState_(STATE_NEXT_SHAPE),
+    level_(1),
+    well_(new Well()),
+    timerDrop_(new Timer()),
+    timerSet_(new Timer())
 {
 
 }
@@ -30,29 +34,54 @@ GameP Game::getInstance() {
 
 void Game::update() {
 	gameLogic();
-	well_->update();
-	if (shape_) shape_->update();
+    
+    if (gamePhase_ != PHASE_PAUSED) {
+        well_->update();
+        if (shape_) shape_->update();
+    }
 }
 
 void Game::draw() {
-	well_->draw();
-	if (shape_) shape_->draw();
+    if (gamePhase_ != PHASE_PAUSED) {
+        well_->draw();
+        if (shape_) shape_->draw();
+    }
 }
 
-void Game::startGame() {
+void Game::start() {
     determineCurrentSpeed();
-    activeGameState_ = STATE_SHAPE_FALLING;
+    gamePhase_ = PHASE_ACTIVE;
+    activeGameState_ = STATE_NEXT_SHAPE;
+}
+
+void Game::togglePause() {
+    switch (gamePhase_) {
+        case PHASE_PAUSED:
+            gamePhase_ = PHASE_ACTIVE;
+            break;
+        case PHASE_ACTIVE:
+            gamePhase_ = PHASE_PAUSED;
+            break;
+        default:
+            // do nothing
+            break;
+    }
+}
+
+void Game::stop() {
+    
+}
+
+void Game::processInput(GameInput input) {
+    if (gamePhase_ != PHASE_ACTIVE) return;
+    
 }
 
 void Game::determineCurrentSpeed() {
-    int increase = (level_ - 1) * SPEED_INCREASE_MS;
-    int speed = SPEED_MAX_MS - increase;
-    if (speed < SPEED_MIN_MS) speed = SPEED_MIN_MS;
+    double increase = (level_ - 1) * getSpeedIncSec();
+    double speed = getSpeedMaxSec() - increase;
+    if (speed < getSpeedMinSec()) speed = getSpeedMinSec();
     currentSpeed_ = speed;
-}
-
-void Game::determineNextDropTime() {
-    
 }
 
 void Game::gameLogic() {
@@ -96,12 +125,16 @@ void Game::logicActive() {
 
 void Game::logicActiveNextShape() {
     shape_ = Shape::getRandomShape(well_);
+    timerDrop_->start();
     activeGameState_ = STATE_SHAPE_FALLING;
-    determineNextDropTime();
 }
 
 void Game::logicActiveFalling() {
-    
+    if (timerDrop_->getSeconds() > currentSpeed_) {
+        shape_->setGridPos(shape_->getGridPos() + Vec2i(0, 1));
+        timerDrop_->start();
+        if (shape_->getGridPos().y == 15) activeGameState_ = STATE_NEXT_SHAPE;
+    }
 }
 
 void Game::logicActiveSetting() {

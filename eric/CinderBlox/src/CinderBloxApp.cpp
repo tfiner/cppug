@@ -26,12 +26,15 @@ private:
 };
 
 CinderBloxApp::CinderBloxApp():
-game_(Game::getInstance())
+    game_(Game::getInstance())
 {
 	
 }
 
 void CinderBloxApp::setup() {
+    
+    game_->start();
+    
 	Rand::randomize();	
 }
 

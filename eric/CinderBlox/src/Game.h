@@ -3,10 +3,35 @@
 
 #include "cinder/Cinder.h"
 
+namespace cinder {
+    class Timer;    
+}
+
 namespace cb {
 
+    typedef boost::shared_ptr<cinder::Timer> TimerP;
+    
+	class Well;
+	typedef boost::shared_ptr<Well> WellP;
+    
+	class Shape;
+	typedef boost::shared_ptr<Shape> ShapeP;
+	
+	class Game;
+	typedef boost::shared_ptr<Game> GameP;
+    
+    /**
+	 * The various inputs that can be provided by the player.
+     */
+    enum GameInput {
+        INPUT_MOVE_LEFT,
+        INPUT_MOVE_RIGHT,
+        INPUT_ROTATE_LEFT,
+        INPUT_ROTATE_RIGHT
+    };
+    
 	/**
-	 * An enumeration of the various phases the game can be in.
+	 * The various phases the game can be in.
 	 */
 	enum GamePhase {
 		/**
@@ -26,7 +51,7 @@ namespace cb {
 	};
 	
 	/**
-	 * An enumeration of the various states the game can be in while it's active.
+	 * The various states the game can be in while it's active.
 	 */
 	enum ActiveGameState {
 		/**
@@ -41,7 +66,7 @@ namespace cb {
 		
 		/**
 		 * The falling Shape has touched a block already in the Well. After a period of time, or by explicit action of
-         * the player, the Shape will become set.
+         * the player, the Shape will become set. Once a shape is set, it can no longer move.
 		 */
 		STATE_SHAPE_SETTING,
 		
@@ -51,15 +76,6 @@ namespace cb {
 		 */
 		STATE_SHAPE_SET
 	};
-	
-	class Well;
-	typedef boost::shared_ptr<Well> WellP;
-		
-	class Shape;
-	typedef boost::shared_ptr<Shape> ShapeP;
-	
-	class Game;
-	typedef boost::shared_ptr<Game> GameP;
 	
 	/**
 	 * The Game class is responsible for keeping track of the state of the game and modifying that state based on user
@@ -73,7 +89,15 @@ namespace cb {
 		// the game wants to be aware of the update/draw cycle but is not itself Drawable
 		virtual void update();
 		virtual void draw();
-		
+
+        void start();
+        
+        void togglePause();
+        
+        void stop();
+        
+        void processInput(GameInput input);        
+        
 	private:
 		// this is a singleton
 		Game();
@@ -81,8 +105,6 @@ namespace cb {
 		
 		static GameP INSTANCE;
 		
-        void startGame();
-        
 		// the game logic executed every iteration of update()
 		void gameLogic();
 
@@ -100,9 +122,6 @@ namespace cb {
         // figure out how fast Shapes should be falling
         void determineCurrentSpeed();
         
-        // figure out when the Shape should drop next
-        void determineNextDropTime();
-        
 		// the game owns a Well
 		WellP well_;
 		
@@ -116,18 +135,25 @@ namespace cb {
         // the level is used to determine the falling speed of a Shape
 		int level_;
         
-        // the minimum and maximum number of milliseconds a Shape will wait before moving down one more line
-        static const int SPEED_MAX_MS = 1000;
-        static const int SPEED_MIN_MS = 100;
+        // the minimum and maximum number of seconds a Shape will wait before moving down one more line
+        static const double getSpeedMaxSec() { return 1.0f; };
+        static const double getSpeedMinSec() { return 0.03f; };
         
         // the increase in drop speed for each level
-        static const int SPEED_INCREASE_MS = 100;
+        static const double getSpeedIncSec() { return 0.1f; };
         
         // how fast Shapes are currently falling
-        int currentSpeed_;
+        double currentSpeed_;
         
         // indicates the time at which the Shape should drop down one more line
         double nextDrop_;
+        
+        // the timer we use to keep track of the next drop
+        TimerP timerDrop_;
+        
+        // the timer we use to keep track of when a shape should set
+        TimerP timerSet_;
+
 	};
 
 }

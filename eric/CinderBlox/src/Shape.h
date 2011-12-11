@@ -42,6 +42,7 @@ namespace cb {
         static ShapeP getRandomShape(WellP well);
         static ShapeP getShape(ShapeType type, WellP well);
         
+        ci::Vec2i getGridPos();
         void setGridPos(ci::Vec2i gridPos);
         
         void rotateLeft();
