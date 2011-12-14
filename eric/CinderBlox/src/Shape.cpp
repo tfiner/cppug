@@ -70,13 +70,17 @@ void Shape::init() {
     updatePixelPos();
 }
 
-ci::Vec2i Shape::getGridPos() {
+void Shape::update() {
+    updatePixelPos();
+    DrawableContainer::update();
+}
+
+Vec2i Shape::getGridPos() {
     return gridPos_;
 }
 
 void Shape::setGridPos(ci::Vec2i gridPos) {
     gridPos_ = gridPos;
-    updatePixelPos();
 }
 
 void Shape::updatePixelPos() {
@@ -153,8 +157,23 @@ void Shape::rotate(bool isLeft) {
             }
         }
     }
+}
+
+bool Shape::isAbleToFit() {
+    for (int y = 0; y < size_; ++y) {
+        for (int x = 0; x < size_; ++x) {
+            BlockP block = blocks_[y][x];
+            if (block) {
+                Vec2i gridPos = gridPos_ + Vec2i(x, y);
+                
+                if (!well_->isInBounds(gridPos) || well_->isBlockAt(gridPos)) {
+                    return false;
+                }
+            }
+        }
+    }
     
-    updatePixelPos();
+    return true;
 }
 
 //////

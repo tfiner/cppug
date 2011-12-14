@@ -3,6 +3,8 @@
 
 #include "cinder/Cinder.h"
 
+#include "cinder/Vector.h"
+
 namespace cinder {
     class Timer;    
 }
@@ -26,6 +28,7 @@ namespace cb {
     enum GameInput {
         INPUT_MOVE_LEFT,
         INPUT_MOVE_RIGHT,
+        INPUT_MOVE_DOWN,
         INPUT_ROTATE_LEFT,
         INPUT_ROTATE_RIGHT
     };
@@ -121,6 +124,14 @@ namespace cb {
 
         // figure out how fast Shapes should be falling
         void determineCurrentSpeed();
+        
+        // move a Shape accoring to the motion provided, if possible. if the Shape will not fit in the Well, the move
+        // is not performed.
+        void moveShape(ci::Vec2i motion);
+        
+        // rotate a Shape. if the Shape does not fit in the Well, even after moving up by one row, the rotation is
+        // not performed.
+        void rotateShape(bool isLeft);
         
 		// the game owns a Well
 		WellP well_;

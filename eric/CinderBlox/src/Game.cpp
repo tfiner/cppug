@@ -72,9 +72,61 @@ void Game::stop() {
     
 }
 
+void Game::moveShape(Vec2i motion) {
+    // move the shape
+    shape_->setGridPos(shape_->getGridPos() + motion);
+    
+    // if the shape doesn't fit here, undo the move
+    if (!shape_->isAbleToFit()) {
+        shape_->setGridPos(shape_->getGridPos() - motion);
+    }
+}
+
+void Game::rotateShape(bool isLeft) {
+    // rotate the shape
+    if (isLeft) {
+        shape_->rotateLeft();
+    } else {
+        shape_->rotateRight();
+    }
+    
+    if (!shape_->isAbleToFit()) {
+        // try moving the shape up one row
+        shape_->setGridPos(shape_->getGridPos() + Vec2i(0, -1));
+        
+        // if the shape still doesn't fit, undo the move / rotate
+        if (!shape_->isAbleToFit()) {
+            shape_->setGridPos(shape_->getGridPos() + Vec2i(0, 1));
+            
+            if (isLeft) {
+                shape_->rotateRight();
+            } else {
+                shape_->rotateLeft();
+            }
+        }
+    }
+}
+
 void Game::processInput(GameInput input) {
     if (gamePhase_ != PHASE_ACTIVE) return;
     
+    switch (input) {
+        case INPUT_MOVE_LEFT:
+            moveShape(Vec2i(-1, 0));
+            break;
+        case INPUT_MOVE_RIGHT:
+            moveShape(Vec2i(1, 0));
+            break;
+        case INPUT_MOVE_DOWN:
+            moveShape(Vec2i(0, 1));
+            break;
+        case INPUT_ROTATE_LEFT:
+            rotateShape(true);
+            break;
+        case INPUT_ROTATE_RIGHT:
+            rotateShape(false);
+            break;
+    }
 }
 
 void Game::determineCurrentSpeed() {
@@ -131,9 +183,12 @@ void Game::logicActiveNextShape() {
 
 void Game::logicActiveFalling() {
     if (timerDrop_->getSeconds() > currentSpeed_) {
-        shape_->setGridPos(shape_->getGridPos() + Vec2i(0, 1));
-        timerDrop_->start();
-        if (shape_->getGridPos().y == 15) activeGameState_ = STATE_NEXT_SHAPE;
+        if (shape_->getGridPos().y >= 17) {
+            activeGameState_ = STATE_NEXT_SHAPE;
+        } else {
+            shape_->setGridPos(shape_->getGridPos() + Vec2i(0, 1));
+            timerDrop_->start();
+        }
     }
 }
 

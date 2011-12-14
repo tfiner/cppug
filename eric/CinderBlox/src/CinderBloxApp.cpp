@@ -17,7 +17,7 @@ public:
 	CinderBloxApp();
 	
 	void setup();
-	void mouseDown(MouseEvent event);
+	void keyDown(KeyEvent event);
 	void update();
 	void draw();
 	
@@ -38,8 +38,24 @@ void CinderBloxApp::setup() {
 	Rand::randomize();	
 }
 
-void CinderBloxApp::mouseDown( MouseEvent event ) {
-	
+void CinderBloxApp::keyDown(KeyEvent event) {
+    switch (event.getCode()) {
+        case KeyEvent::KEY_RIGHT:
+            game_->processInput(INPUT_MOVE_RIGHT);
+            break;
+        case KeyEvent::KEY_LEFT:
+            game_->processInput(INPUT_MOVE_LEFT);
+            break;
+        case KeyEvent::KEY_DOWN:
+            game_->processInput(INPUT_MOVE_DOWN);
+            break;
+        case KeyEvent::KEY_z:
+            game_->processInput(INPUT_ROTATE_LEFT);
+            break;
+        case KeyEvent::KEY_x:
+            game_->processInput(INPUT_ROTATE_RIGHT);
+            break;
+    }
 }
 
 void CinderBloxApp::update() {

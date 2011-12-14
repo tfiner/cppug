@@ -48,6 +48,11 @@ namespace cb {
         void rotateLeft();
         void rotateRight();
 
+        // returns false if the shape is not in bounds or is overlapping block(s) in the Well
+        bool isAbleToFit();
+        
+        virtual void update();
+        
     protected:
         Shape(WellP well, int size, ci::Color color);
         
