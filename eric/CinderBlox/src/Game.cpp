@@ -17,8 +17,7 @@ Game::Game():
     activeGameState_(STATE_NEXT_SHAPE),
     level_(1),
     well_(new Well()),
-    timerDrop_(new Timer()),
-    timerSet_(new Timer())
+    timerDrop_(new Timer())
 {
 
 }
@@ -80,6 +79,21 @@ void Game::moveShape(Vec2i motion) {
     if (!shape_->isAbleToFit()) {
         shape_->setGridPos(shape_->getGridPos() - motion);
     }
+    
+    // if the shape is touching the bottom of the well or other blocks, then we're "setting"
+    if (shape_->isTouching()) {
+        // start the setting timer and note we're in the setting state
+        if (activeGameState_ == STATE_SHAPE_FALLING) {
+            timerSet_->start();
+            activeGameState_ = STATE_SHAPE_SETTING;
+        }
+    // if the shape is not touching, we can move out of "setting" state. note the timer is not reset.
+    } else {
+        if (activeGameState_ == STATE_SHAPE_SETTING) {
+            timerSet_->stop();
+            activeGameState_ = STATE_SHAPE_FALLING;
+        }
+    }
 }
 
 void Game::rotateShape(bool isLeft) {
@@ -108,7 +122,11 @@ void Game::rotateShape(bool isLeft) {
 }
 
 void Game::processInput(GameInput input) {
+    // we only allow input while the game is active
     if (gamePhase_ != PHASE_ACTIVE) return;
+    
+    // we only allow input while falling or setting
+    if (activeGameState_ != STATE_SHAPE_FALLING && activeGameState_ != STATE_SHAPE_SETTING) return;
     
     switch (input) {
         case INPUT_MOVE_LEFT:
@@ -118,7 +136,12 @@ void Game::processInput(GameInput input) {
             moveShape(Vec2i(1, 0));
             break;
         case INPUT_MOVE_DOWN:
-            moveShape(Vec2i(0, 1));
+            // if the player presses down while a shape is setting it will become set immediately
+            if (activeGameState_ == STATE_SHAPE_SETTING) {
+                activeGameState_ = STATE_SHAPE_SET;
+            } else {
+                moveShape(Vec2i(0, 1));
+            }
             break;
         case INPUT_ROTATE_LEFT:
             rotateShape(true);
@@ -177,26 +200,37 @@ void Game::logicActive() {
 
 void Game::logicActiveNextShape() {
     shape_ = Shape::getRandomShape(well_);
+    
     timerDrop_->start();
+    
+    // we need to make sure that the setting timer is at 0 and the set timer is not running each time a new shape
+    // appears. Cinder's Timer class doesn't seem to have a way to reset the timer to 0 without also starting it, so
+    // we'll just make a new one each time.
+    timerSet_ = TimerP(new Timer());
+    
     activeGameState_ = STATE_SHAPE_FALLING;
 }
 
 void Game::logicActiveFalling() {
+    // if the drop timer has been exceeded we will try to drop the block and start the timer again
     if (timerDrop_->getSeconds() > currentSpeed_) {
-        if (shape_->getGridPos().y >= 17) {
-            activeGameState_ = STATE_NEXT_SHAPE;
-        } else {
-            shape_->setGridPos(shape_->getGridPos() + Vec2i(0, 1));
-            timerDrop_->start();
-        }
+        moveShape(Vec2i(0, 1));
+        timerDrop_->start();
     }
 }
 
 void Game::logicActiveSetting() {
-    
+    // if the setting timer has been exceeded then we have to set the shape
+    if (timerSet_->getSeconds() > getSettingMaxSec()) {
+        activeGameState_ = STATE_SHAPE_SET;
+    // shapes should continue to try and fall when setting
+    } else {
+        logicActiveFalling();
+    }
 }
 
 void Game::logicActiveSet() {
-    
-    determineCurrentSpeed();
+    // put the shape into the well and move on to the next shape
+    shape_->putInWell();
+    activeGameState_ = STATE_NEXT_SHAPE;
 }

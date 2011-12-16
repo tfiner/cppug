@@ -69,7 +69,9 @@ namespace cb {
 		
 		/**
 		 * The falling Shape has touched a block already in the Well. After a period of time, or by explicit action of
-         * the player, the Shape will become set. Once a shape is set, it can no longer move.
+         * the player, the Shape will become set. Once a shape is set, it can no longer move. Without setting, Shapes
+         * would freeze as soon as they landed on a block or the bottom of the Well, and you wouldn't be able to
+         * slide a shape under an overhanging block, etc.
 		 */
 		STATE_SHAPE_SETTING,
 		
@@ -152,6 +154,9 @@ namespace cb {
         
         // the increase in drop speed for each level
         static const double getSpeedIncSec() { return 0.1f; };
+        
+        // the amount of time we allow a shape to be in "setting" state before it "sets"
+        static const double getSettingMaxSec() { return 1.0f; }
         
         // how fast Shapes are currently falling
         double currentSpeed_;

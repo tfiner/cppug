@@ -51,6 +51,12 @@ namespace cb {
         // returns false if the shape is not in bounds or is overlapping block(s) in the Well
         bool isAbleToFit();
         
+        // returns true if the shape is in contact with a block below it or with the bottom of the Well
+        bool isTouching();
+        
+        // adds this shape's blocks to the Well
+        void putInWell();
+        
         virtual void update();
         
     protected:

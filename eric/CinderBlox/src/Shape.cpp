@@ -176,6 +176,36 @@ bool Shape::isAbleToFit() {
     return true;
 }
 
+bool Shape::isTouching() {
+    for (int y = 0; y < size_; ++y) {
+        for (int x = 0; x < size_; ++x) {
+            BlockP block = blocks_[y][x];
+            if (block) {
+                // check out the position directly below this block
+                Vec2i gridPos = gridPos_ + Vec2i(x, y) + Vec2i(0, 1);
+                
+                if (!well_->isInBounds(gridPos) || well_->isBlockAt(gridPos)) {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+void Shape::putInWell() {
+    for (int y = 0; y < size_; ++y) {
+        for (int x = 0; x < size_; ++x) {
+            BlockP block = blocks_[y][x];
+            if (block) {
+                Vec2i gridPos = gridPos_ + Vec2i(x, y);
+                well_->addBlock(gridPos, block);
+            }
+        }
+    }
+}
+
 //////
 // I
 //////
