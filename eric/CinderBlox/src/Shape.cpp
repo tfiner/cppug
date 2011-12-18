@@ -79,6 +79,10 @@ Vec2i Shape::getGridPos() {
     return gridPos_;
 }
 
+int Shape::getSize() {
+    return size_;
+}
+
 void Shape::setGridPos(ci::Vec2i gridPos) {
     gridPos_ = gridPos;
 }

@@ -19,7 +19,10 @@ namespace cb {
 	public:
 		// the size of the well of blocks
 		static const int WELL_ROWS = 21;
-		static const int WELL_COLS = 30;
+		static const int WELL_COLS = 12;
+        
+        Well();
+        virtual ~Well() { }
         
 		/**
 		 * Returns the upper left pixel position for a grid position
@@ -35,10 +38,16 @@ namespace cb {
 		bool isBlockAt(ci::Vec2i gridPos);
 		void clearBlocks();
 		
+        virtual void draw();
+        
 	private:
 		// how far the well should be drawn from the top left edge of the screen
 		static const int X_OFFSET = 10;
 		static const int Y_OFFSET = 10;
+        
+        // the pixel boundary of the well
+        ci::Vec2i pixelPosUL_;
+        ci::Vec2i pixelPosLR_;
         
         // the well of blocks
         typedef boost::array<BlockP, WELL_COLS> WellBlockPA;

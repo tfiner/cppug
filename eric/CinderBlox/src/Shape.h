@@ -45,6 +45,8 @@ namespace cb {
         ci::Vec2i getGridPos();
         void setGridPos(ci::Vec2i gridPos);
         
+        int getSize();
+        
         void rotateLeft();
         void rotateRight();
 

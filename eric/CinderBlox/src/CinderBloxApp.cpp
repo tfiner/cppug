@@ -63,7 +63,7 @@ void CinderBloxApp::update() {
 }
 
 void CinderBloxApp::draw() {
-	gl::clear(Color( 0, 0, 0 ));
+	gl::clear(Color( 0.25f, 0.25f, 0.25f ));
 	game_->draw();
 }
 

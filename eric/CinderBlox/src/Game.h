@@ -124,6 +124,9 @@ namespace cb {
         void logicActiveSetting();
         void logicActiveSet();
 
+        // make sure the current state is still correct
+        void checkState();
+        
         // figure out how fast Shapes should be falling
         void determineCurrentSpeed();
         

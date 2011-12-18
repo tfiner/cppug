@@ -78,8 +78,10 @@ void Game::moveShape(Vec2i motion) {
     // if the shape doesn't fit here, undo the move
     if (!shape_->isAbleToFit()) {
         shape_->setGridPos(shape_->getGridPos() - motion);
-    }
-    
+    }    
+}
+
+void Game::checkState() {
     // if the shape is touching the bottom of the well or other blocks, then we're "setting"
     if (shape_->isTouching()) {
         // start the setting timer and note we're in the setting state
@@ -87,7 +89,7 @@ void Game::moveShape(Vec2i motion) {
             timerSet_->start();
             activeGameState_ = STATE_SHAPE_SETTING;
         }
-    // if the shape is not touching, we can move out of "setting" state. note the timer is not reset.
+        // if the shape is not touching, we can move out of "setting" state. note the timer is not reset.
     } else {
         if (activeGameState_ == STATE_SHAPE_SETTING) {
             timerSet_->stop();
@@ -196,6 +198,8 @@ void Game::logicActive() {
             logicActiveSet();
             break;
     }
+    
+    checkState();
 }
 
 void Game::logicActiveNextShape() {
@@ -219,13 +223,10 @@ void Game::logicActiveFalling() {
     }
 }
 
-void Game::logicActiveSetting() {
+void Game::logicActiveSetting() {    
     // if the setting timer has been exceeded then we have to set the shape
     if (timerSet_->getSeconds() > getSettingMaxSec()) {
         activeGameState_ = STATE_SHAPE_SET;
-    // shapes should continue to try and fall when setting
-    } else {
-        logicActiveFalling();
     }
 }
 
