@@ -21,16 +21,16 @@ Well::Well():
 void Well::addBlock(Vec2i gridPos, BlockP block) {
 	assert (isInBounds(gridPos));
 	
-	if (isBlockAt(gridPos)) removeBlock(gridPos);
+	if (getBlockAt(gridPos)) removeBlock(gridPos);
 	
 	blocks_[gridPos.y][gridPos.x] = block;
 	block->setPixelPos(getPixelPos(gridPos));
 	DrawableContainer::addDrawable(block);
 }
 
-bool Well::isBlockAt(Vec2i gridPos) {
+BlockP Well::getBlockAt(Vec2i gridPos) {
 	assert (isInBounds(gridPos));
-	return blocks_[gridPos.y][gridPos.x] != 0;
+	return blocks_[gridPos.y][gridPos.x];
 }
 
 void Well::clearBlocks() {
@@ -38,6 +38,42 @@ void Well::clearBlocks() {
 	
 	// TODO: clear array
 	
+}
+
+bool Well::isRowFull(int row) {
+    if (!isInBounds(Vec2i(0, row))) return false;
+        
+    for (int col = 0; col < WELL_COLS; col++) {
+        if (!blocks_[row][col]) return false;
+    }
+    
+    return true;
+}
+
+void Well::toggleRowVisibility(int row) {
+    for (int col = 0; col < WELL_COLS; col++) {
+        BlockP block = blocks_[row][col];
+        if (block) {
+            block->setVisible(!block->isVisible());
+        }
+    }    
+}
+
+void Well::removeRow(int row) {
+    for (int col = 0; col < WELL_COLS; col++) {
+        removeBlock(Vec2i(col, row));
+    }
+    
+    for (--row; row >= 0; --row) {
+        for (int col = 0; col < WELL_COLS; col++) {
+            BlockP block = blocks_[row][col];
+            blocks_[row + 1][col] = block;
+            
+            if (block) {
+                block->setPixelPos(getPixelPos(Vec2i(col, row + 1)));
+            }
+        }
+    }
 }
 
 void Well::draw() {
@@ -63,6 +99,6 @@ bool Well::isInBounds(Vec2i gridPos) {
 
 void Well::removeBlock(Vec2i gridPos) {
     assert (isInBounds(gridPos));
-    if (!isBlockAt(gridPos)) return;
+    if (!getBlockAt(gridPos)) return;
 	DrawableContainer::removeDrawable(blocks_[gridPos.y][gridPos.x]);
 }

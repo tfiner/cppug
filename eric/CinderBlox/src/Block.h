@@ -23,9 +23,13 @@ namespace cb {
         
 		virtual void update();
 		virtual void draw();
+        
+        void setVisible(bool isVisible);
+        bool isVisible();
 	private:
         ci::Vec2i pos_;
         ci::Color color_;
+        bool isVisible_;
 	};
 
 	typedef boost::shared_ptr<Block> BlockP;

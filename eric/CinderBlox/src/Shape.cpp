@@ -170,7 +170,7 @@ bool Shape::isAbleToFit() {
             if (block) {
                 Vec2i gridPos = gridPos_ + Vec2i(x, y);
                 
-                if (!well_->isInBounds(gridPos) || well_->isBlockAt(gridPos)) {
+                if (!well_->isInBounds(gridPos) || well_->getBlockAt(gridPos)) {
                     return false;
                 }
             }
@@ -188,7 +188,7 @@ bool Shape::isTouching() {
                 // check out the position directly below this block
                 Vec2i gridPos = gridPos_ + Vec2i(x, y) + Vec2i(0, 1);
                 
-                if (!well_->isInBounds(gridPos) || well_->isBlockAt(gridPos)) {
+                if (!well_->isInBounds(gridPos) || well_->getBlockAt(gridPos)) {
                     return true;
                 }
             }

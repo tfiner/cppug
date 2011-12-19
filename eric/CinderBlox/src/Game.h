@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "Shape.h"
+
 #include "cinder/Cinder.h"
 
 #include "cinder/Vector.h"
@@ -79,7 +81,12 @@ namespace cb {
 		 * The Shape is set and can no longer move. We must check if the Well state should change because any lines are
          * completed, etc.
 		 */
-		STATE_SHAPE_SET
+		STATE_SHAPE_SET,
+        
+        /**
+         * We're clearing out lines after a shape has been placed.
+         */
+        STATE_CLEARING_LINES
 	};
 	
 	/**
@@ -123,9 +130,13 @@ namespace cb {
         void logicActiveFalling();
         void logicActiveSetting();
         void logicActiveSet();
+        void logicActiveClearingLines();
 
-        // make sure the current state is still correct
+        // we can move between falling and setting states, so we have to check which we're in
         void checkState();
+        
+        // see if we have any lines to remove after setting a shape
+        void checkForLinesToClear();
         
         // figure out how fast Shapes should be falling
         void determineCurrentSpeed();
@@ -161,6 +172,12 @@ namespace cb {
         // the amount of time we allow a shape to be in "setting" state before it "sets"
         static const double getSettingMaxSec() { return 1.0f; }
         
+        // how long we will animate the clearing of lines
+        static const double getClearingSpeed() { return 0.8f; }
+        
+        // how long we will flash a line when clearing it
+        static const double getFlashSpeed() { return 0.2f; }
+        
         // how fast Shapes are currently falling
         double currentSpeed_;
         
@@ -172,7 +189,14 @@ namespace cb {
         
         // the timer we use to keep track of when a shape should set
         TimerP timerSet_;
-
+        
+        // the timer we use to animate the clearing of lines
+        TimerP timerClearing_;
+        
+        // the timer we use for each individual flash when clearing lines
+        TimerP timerFlash_;
+        
+        std::list<int> completedLines_;
 	};
 
 }

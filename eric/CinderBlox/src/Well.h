@@ -35,9 +35,12 @@ namespace cb {
 		static bool isInBounds(ci::Vec2i gridPos);
 
 		void addBlock(ci::Vec2i gridPos, BlockP block);
-		bool isBlockAt(ci::Vec2i gridPos);
+		BlockP getBlockAt(ci::Vec2i gridPos);
 		void clearBlocks();
-		
+		bool isRowFull(int row);
+        void toggleRowVisibility(int row);
+        void removeRow(int row);
+        
         virtual void draw();
         
 	private:

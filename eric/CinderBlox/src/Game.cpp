@@ -17,7 +17,9 @@ Game::Game():
     activeGameState_(STATE_NEXT_SHAPE),
     level_(1),
     well_(new Well()),
-    timerDrop_(new Timer())
+    timerDrop_(new Timer()),
+    timerClearing_(new Timer()),
+    timerFlash_(new Timer())
 {
 
 }
@@ -94,6 +96,19 @@ void Game::checkState() {
         if (activeGameState_ == STATE_SHAPE_SETTING) {
             timerSet_->stop();
             activeGameState_ = STATE_SHAPE_FALLING;
+        }
+    }
+}
+
+void Game::checkForLinesToClear() {
+    completedLines_.clear();
+    
+    int startRow = shape_->getGridPos().y;
+    int endRow = startRow + shape_->getSize();
+    
+    for (int row = startRow; row < endRow; ++row) {
+        if (well_->isRowFull(row)) {
+            completedLines_.push_back(row);
         }
     }
 }
@@ -190,16 +205,19 @@ void Game::logicActive() {
             break;
         case STATE_SHAPE_FALLING:
             logicActiveFalling();
+            checkState();
             break;
         case STATE_SHAPE_SETTING:
             logicActiveSetting();
+            checkState();
             break;
         case STATE_SHAPE_SET:
             logicActiveSet();
             break;
-    }
-    
-    checkState();
+        case STATE_CLEARING_LINES:
+            logicActiveClearingLines();
+            break;   
+    }    
 }
 
 void Game::logicActiveNextShape() {
@@ -233,5 +251,39 @@ void Game::logicActiveSetting() {
 void Game::logicActiveSet() {
     // put the shape into the well and move on to the next shape
     shape_->putInWell();
-    activeGameState_ = STATE_NEXT_SHAPE;
+    checkForLinesToClear();
+    
+    // at this point we can't continue to hold on to this shape. it needs to be destroyed.
+    // if this doesn't happen, the well won't be able to properly manipulate the blocks that once made up the shape.
+    shape_.reset();
+    
+    if (completedLines_.size() > 0) {
+        timerClearing_->start();
+        timerFlash_->start();
+        activeGameState_ = STATE_CLEARING_LINES;
+    } else {
+        activeGameState_ = STATE_NEXT_SHAPE;
+    }
+}
+
+void Game::logicActiveClearingLines() {
+    if (timerClearing_->getSeconds() > getClearingSpeed()) {
+        std::list<int>::iterator i = completedLines_.begin();
+        while (i != completedLines_.end()) {
+            well_->removeRow((*i));
+            ++i;
+        }
+        
+        activeGameState_ = STATE_NEXT_SHAPE;
+    } else {
+        if (timerFlash_->getSeconds() > getFlashSpeed()) {
+            std::list<int>::iterator i = completedLines_.begin();
+            while (i != completedLines_.end()) {
+                well_->toggleRowVisibility((*i));
+                ++i;
+            }
+            
+            timerFlash_->start();
+        }
+    }
 }

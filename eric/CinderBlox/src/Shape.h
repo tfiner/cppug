@@ -37,6 +37,8 @@ namespace cb {
      */
 	class Shape : public DrawableContainer {
 	public:
+        static const int MAX_SIZE = 4;
+        
         virtual ~Shape() {}
         
         static ShapeP getRandomShape(WellP well);
