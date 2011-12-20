@@ -15,7 +15,6 @@ GameP Game::INSTANCE;
 Game::Game():
     gamePhase_(PHASE_OVER),
     activeGameState_(STATE_NEXT_SHAPE),
-    level_(1),
     well_(new Well()),
     timerDrop_(new Timer()),
     timerClearing_(new Timer()),
@@ -50,6 +49,7 @@ void Game::draw() {
 }
 
 void Game::start() {
+    level_ = 7;
     determineCurrentSpeed();
     gamePhase_ = PHASE_ACTIVE;
     activeGameState_ = STATE_NEXT_SHAPE;
@@ -147,10 +147,10 @@ void Game::processInput(GameInput input) {
     
     switch (input) {
         case INPUT_MOVE_LEFT:
-            moveShape(Vec2i(-1, 0));
+            if (!shape_->isHidden()) moveShape(Vec2i(-1, 0));
             break;
         case INPUT_MOVE_RIGHT:
-            moveShape(Vec2i(1, 0));
+            if (!shape_->isHidden()) moveShape(Vec2i(1, 0));
             break;
         case INPUT_MOVE_DOWN:
             // if the player presses down while a shape is setting it will become set immediately
@@ -223,12 +223,20 @@ void Game::logicActive() {
 void Game::logicActiveNextShape() {
     shape_ = Shape::getRandomShape(well_);
     
+    shape_->setGridPos(Vec2i((Well::WELL_COLS / 2) - 2, 0));
+    
     timerDrop_->start();
     
     // we need to make sure that the setting timer is at 0 and the set timer is not running each time a new shape
     // appears. Cinder's Timer class doesn't seem to have a way to reset the timer to 0 without also starting it, so
     // we'll just make a new one each time.
     timerSet_ = TimerP(new Timer());
+    
+    // move the shape until part of it is visible
+    while (shape_->isHidden()) {
+        moveShape(Vec2i(0, 1));
+        shape_->updatePixelPos();
+    }
     
     activeGameState_ = STATE_SHAPE_FALLING;
 }

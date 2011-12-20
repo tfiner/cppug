@@ -13,7 +13,7 @@ using namespace gl;
 Well::Well():
     pixelPosUL_(X_OFFSET, Y_OFFSET),
     pixelPosLR_((Block::BLOCK_SIZE * WELL_COLS) + WELL_COLS + X_OFFSET,
-                (Block::BLOCK_SIZE * WELL_ROWS) + WELL_ROWS + Y_OFFSET)
+                (Block::BLOCK_SIZE * (WELL_ROWS - WELL_HIDDEN)) + WELL_ROWS + Y_OFFSET)
 {
     
 }
@@ -87,7 +87,7 @@ Vec2f Well::getPixelPos(Vec2i gridPos) {
 	
 	// add one pixel border around blocks
 	int x = (gridPos.x * Block::BLOCK_SIZE) + (gridPos.x + X_OFFSET);
-	int y = (gridPos.y * Block::BLOCK_SIZE) + (gridPos.y + Y_OFFSET);
+	int y = ((gridPos.y - WELL_HIDDEN) * Block::BLOCK_SIZE) + (gridPos.y + Y_OFFSET);
 	return Vec2i(x, y);
 }
 
@@ -95,6 +95,10 @@ bool Well::isInBounds(Vec2i gridPos) {
 	bool rowOk = (gridPos.y >= 0) && (gridPos.y < WELL_ROWS);
 	bool colOk = (gridPos.x >= 0) && (gridPos.x < WELL_COLS);
 	return rowOk && colOk;
+}
+
+bool Well::isInVisibleArea(ci::Vec2i gridPos) {
+    return gridPos.y >= WELL_HIDDEN;
 }
 
 void Well::removeBlock(Vec2i gridPos) {

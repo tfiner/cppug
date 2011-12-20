@@ -18,8 +18,11 @@ namespace cb {
 	class Well : public DrawableContainer {
 	public:
 		// the size of the well of blocks
-		static const int WELL_ROWS = 21;
+		static const int WELL_ROWS = 25;
 		static const int WELL_COLS = 12;
+        
+        // the number of rows above the visible area of the well
+        static const int WELL_HIDDEN = 4;
         
         Well();
         virtual ~Well() { }
@@ -33,12 +36,40 @@ namespace cb {
 		 * Returns true if the row and column are within the well
 		 */
 		static bool isInBounds(ci::Vec2i gridPos);
+        
+        /**
+         * Returns true if the block is within the visible area of the well
+         */
+        static bool isInVisibleArea(ci::Vec2i gridPos);
 
+        /**
+         * Add a block to the well
+         */
 		void addBlock(ci::Vec2i gridPos, BlockP block);
+        
+        /**
+         * Return a block at the specified location (may be null)
+         */
 		BlockP getBlockAt(ci::Vec2i gridPos);
+        
+        /**
+         * Remove all blocks from the well
+         */
 		void clearBlocks();
+        
+        /**
+         * Returns true if there is a block in every column of the specified row
+         */
 		bool isRowFull(int row);
+        
+        /**
+         * Toggles visibility for all the blocks in the given row
+         */
         void toggleRowVisibility(int row);
+        
+        /**
+         * Removes an entire row of blocks from the well, moving every row above it down
+         */
         void removeRow(int row);
         
         virtual void draw();

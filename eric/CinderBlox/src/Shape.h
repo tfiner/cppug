@@ -58,8 +58,14 @@ namespace cb {
         // returns true if the shape is in contact with a block below it or with the bottom of the Well
         bool isTouching();
         
+        // returns true if no part of the shape is currently visible in the well
+        bool isHidden();
+        
         // adds this shape's blocks to the Well
         void putInWell();
+
+        // make sure the pixel position is up to date with the grid position of each block
+        void updatePixelPos();
         
         virtual void update();
         
@@ -90,9 +96,6 @@ namespace cb {
         
         // used by static factory methods to build the shape
         void init();
-        
-        // make sure the pixel position is up to date with the grid position of each block
-        void updatePixelPos();
         
         // put the blocks into the shape
         virtual void build() = 0;

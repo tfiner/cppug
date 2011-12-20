@@ -92,7 +92,15 @@ void Shape::updatePixelPos() {
         for (int x = 0; x < size_; ++x) {
             BlockP block = blocks_[y][x];
             if (block) {
-                block->setPixelPos(Well::getPixelPos(gridPos_ + Vec2i(x, y)));
+                Vec2i wellGridPos = gridPos_ + Vec2i(x, y);
+                
+                // don't draw blocks that are outside the well's visible area
+                if (well_->isInVisibleArea(wellGridPos)) {
+                    block->setPixelPos(Well::getPixelPos(wellGridPos));
+                    block->setVisible(true);
+                } else {
+                    block->setVisible(false);
+                }
             }
         }
     }
@@ -196,6 +204,17 @@ bool Shape::isTouching() {
     }
     
     return false;
+}
+
+bool Shape::isHidden() {
+    for (int y = 0; y < size_; ++y) {
+        for (int x = 0; x < size_; ++x) {
+            BlockP block = blocks_[y][x];
+            if (block && block->isVisible()) return false;
+        }
+    }
+    
+    return true;
 }
 
 void Shape::putInWell() {
