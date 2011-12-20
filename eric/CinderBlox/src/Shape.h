@@ -52,21 +52,36 @@ namespace cb {
         void rotateLeft();
         void rotateRight();
 
-        // returns false if the shape is not in bounds or is overlapping block(s) in the Well
+        /**
+         * Returns false if the shape is not in bounds or is overlapping block(s) in the Well
+         */
         bool isAbleToFit();
         
-        // returns true if the shape is in contact with a block below it or with the bottom of the Well
+        /**
+         * Returns true if the shape is in contact with a block below it or with the bottom of the Well
+         */
         bool isTouching();
         
-        // returns true if no part of the shape is currently visible in the well
+        /**
+         * Returns true if no part of the shape is currently visible in the well
+         */
         bool isHidden();
         
-        // adds this shape's blocks to the Well
+        /**
+         * Adds this shape's blocks to the Well
+         */
         void putInWell();
-
-        // make sure the pixel position is up to date with the grid position of each block
-        void updatePixelPos();
         
+        /**
+         * Sets whether the shape should consider the well when drawing itself
+         */
+        void setIsInPlay(bool isInPlay);
+        
+        /**
+         * If true, the shape will consider the well when drawing itself
+         */
+        bool isInPlay();
+                
         virtual void update();
         
     protected:
@@ -74,6 +89,9 @@ namespace cb {
         
         // the well into which we will place our blocks
         WellP well_;
+        
+        // indicates whether we should consider the well when drawing
+        bool isInPlay_;
         
         // the upper left corner of the shape within the Well
         ci::Vec2i gridPos_;
@@ -96,6 +114,9 @@ namespace cb {
         
         // used by static factory methods to build the shape
         void init();
+        
+        // make sure the pixel position is up to date with the grid position of each block
+        void updatePixelPos();
         
         // put the blocks into the shape
         virtual void build() = 0;

@@ -18,7 +18,8 @@ Shape::Shape(WellP well, int size, Color color):
     well_(well),
     size_(size),
     color_(color),
-    gridPos_(0, 0)
+    gridPos_(0, 0),
+    isInPlay_(false)
 {
     
 }
@@ -85,6 +86,15 @@ int Shape::getSize() {
 
 void Shape::setGridPos(ci::Vec2i gridPos) {
     gridPos_ = gridPos;
+    updatePixelPos();
+}
+
+void Shape::setIsInPlay(bool isInPlay) {
+    isInPlay_ = isInPlay;
+}
+
+bool Shape::isInPlay() {
+    return isInPlay_;
 }
 
 void Shape::updatePixelPos() {
@@ -93,13 +103,11 @@ void Shape::updatePixelPos() {
             BlockP block = blocks_[y][x];
             if (block) {
                 Vec2i wellGridPos = gridPos_ + Vec2i(x, y);
+                block->setPixelPos(Well::getPixelPos(wellGridPos));
                 
-                // don't draw blocks that are outside the well's visible area
-                if (well_->isInVisibleArea(wellGridPos)) {
-                    block->setPixelPos(Well::getPixelPos(wellGridPos));
-                    block->setVisible(true);
-                } else {
-                    block->setVisible(false);
+                // we don't want to draw blocks that are outside the well's visible area when the shape is in play
+                if (isInPlay_) {
+                    block->setVisible(well_->isInVisibleArea(wellGridPos));
                 }
             }
         }

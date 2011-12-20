@@ -83,8 +83,6 @@ void Well::draw() {
 }
 
 Vec2f Well::getPixelPos(Vec2i gridPos) {
-	assert (isInBounds(gridPos));
-	
 	// add one pixel border around blocks
 	int x = (gridPos.x * Block::BLOCK_SIZE) + (gridPos.x + X_OFFSET);
 	int y = ((gridPos.y - WELL_HIDDEN) * Block::BLOCK_SIZE) + (gridPos.y + Y_OFFSET);

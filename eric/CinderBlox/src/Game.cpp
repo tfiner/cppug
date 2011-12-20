@@ -45,13 +45,20 @@ void Game::draw() {
     if (gamePhase_ != PHASE_PAUSED) {
         well_->draw();
         if (shape_) shape_->draw();
+        if (nextShape_) nextShape_->draw();
     }
+}
+
+void Game::createNextShape() {
+    nextShape_ = Shape::getRandomShape(well_);
+    nextShape_->setGridPos(Vec2i(Well::WELL_COLS + 1, Well::WELL_HIDDEN));
 }
 
 void Game::start() {
     level_ = 7;
     determineCurrentSpeed();
     gamePhase_ = PHASE_ACTIVE;
+    createNextShape();
     activeGameState_ = STATE_NEXT_SHAPE;
 }
 
@@ -153,8 +160,9 @@ void Game::processInput(GameInput input) {
             if (!shape_->isHidden()) moveShape(Vec2i(1, 0));
             break;
         case INPUT_MOVE_DOWN:
-            // if the player presses down while a shape is setting it will become set immediately
-            if (activeGameState_ == STATE_SHAPE_SETTING) {
+            // if the player presses down while a shape is setting (and that shape is touching something),
+            // then it will become set immediately
+            if (activeGameState_ == STATE_SHAPE_SETTING && shape_->isTouching()) {
                 activeGameState_ = STATE_SHAPE_SET;
             } else {
                 moveShape(Vec2i(0, 1));
@@ -221,8 +229,10 @@ void Game::logicActive() {
 }
 
 void Game::logicActiveNextShape() {
-    shape_ = Shape::getRandomShape(well_);
+    shape_ = nextShape_;
+    createNextShape();
     
+    shape_->setIsInPlay(true);
     shape_->setGridPos(Vec2i((Well::WELL_COLS / 2) - 2, 0));
     
     timerDrop_->start();
@@ -235,7 +245,6 @@ void Game::logicActiveNextShape() {
     // move the shape until part of it is visible
     while (shape_->isHidden()) {
         moveShape(Vec2i(0, 1));
-        shape_->updatePixelPos();
     }
     
     activeGameState_ = STATE_SHAPE_FALLING;

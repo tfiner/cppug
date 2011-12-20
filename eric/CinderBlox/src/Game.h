@@ -102,12 +102,24 @@ namespace cb {
 		virtual void update();
 		virtual void draw();
 
+        /**
+         * Start a new game
+         */
         void start();
         
+        /**
+         * Pause / unpause
+         */
         void togglePause();
         
+        /**
+         * End the game
+         */
         void stop();
         
+        /**
+         * Send control input to the game
+         */
         void processInput(GameInput input);        
         
 	private:
@@ -145,15 +157,20 @@ namespace cb {
         // is not performed.
         void moveShape(ci::Vec2i motion);
         
-        // rotate a Shape. if the Shape does not fit in the Well, even after moving up by one row, the rotation is
-        // not performed.
+        // rotate a Shape unless it won't fit in the Well, even after moving to accommodate
         void rotateShape(bool isLeft);
+        
+        // construct the next shape that will be in play
+        void createNextShape();
         
 		// the game owns a Well
 		WellP well_;
 		
 		// the Shape currently in play
 		ShapeP shape_;
+        
+        // the next shape that will be in play
+        ShapeP nextShape_;
 		
 		// our current phase and state
 		GamePhase gamePhase_;
