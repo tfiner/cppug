@@ -25,8 +25,15 @@ public:
 	void draw();
 	
 private:
+    // check all keys
     void checkKeysPressed();
     
+    // check a specific rotation key
+    void checkRotationKey(int key, GameInput input);
+
+    // check a specific movement key
+    void checkMovementKey(int key, GameInput input);
+            
 	GameP game_;
     
     // we note the keys currenty pressed using bitwise flags
@@ -44,8 +51,13 @@ private:
     int keysPressed_;
     
     // we need to control the rate at which pieces can move when keys are being held down
-    static const double getMoveDelay() { return 0.07f; }
+    static const double getMoveDelay() { return 0.065f; }
+    
+    // the initial move delay should be longer to avoid overly sensitive input
+    static const double getInitialMoveDelay() { return 0.2f; }
+        
     TimerP moveDelayTimer_;
+    double currentMoveDelay_;
     
     // we don't allow more than one rotation per key press. because rotation happens only once per any keypress
     // we don't use the same mechanism as the other keys to control it. instead, we just use this one flag.
@@ -63,74 +75,58 @@ CinderBloxApp::CinderBloxApp():
 }
 
 void CinderBloxApp::setup() {
-    moveDelayTimer_->start();
 	Rand::randomize();	
 }
 
-void CinderBloxApp::checkKeysPressed() {
-    bool isTimeToMove = moveDelayTimer_->getSeconds() > getMoveDelay();
-    bool moved = false;
-    
+void CinderBloxApp::checkMovementKey(int key, GameInput input) {
     // to determine whether to move left, right or down we basically ask "was the key just pressed?" which means it
     // is pressed now but was not previously pressed. any time a key was just pressed we will make the associated
     // move. if the key is being held down, meaning it was previously pressed and is currently pressed, then we will
     // only move if moveDelayTimer has elapsed.
+
+    bool keyPressed = keysPressed_ & key;
+    bool keyWasPressed = lastKeysPressed_ & key;
+    bool keyJustPressed = (!keyWasPressed && keyPressed);
+
+    // there's nothing to do if the key is not pressed
+    if (!keyPressed) return;
     
-    // right
+    // if the key was just pressed, we want to use a longer delay before moving again
+    if (keyJustPressed) currentMoveDelay_ = getInitialMoveDelay();
+
+    // if the key was not just pressed we will wait until the timer has elapsed
+    // ignore the initial move delay for the down key
+    bool isTimeToMove = moveDelayTimer_->getSeconds() > (key == KEY_DOWN ? getMoveDelay() : currentMoveDelay_);
     
-    bool moveRightPressed = keysPressed_ & KEY_RIGHT;
-    bool moveRightWasPressed = lastKeysPressed_ & KEY_RIGHT;
-    bool moveRightJustPressed = (!moveRightWasPressed && moveRightPressed);
+    // subsequent keypresses should use a shorter delay
+    if (isTimeToMove) currentMoveDelay_ = getMoveDelay();
     
-    if (moveRightJustPressed | (moveRightPressed && isTimeToMove)) {
-        game_->processInput(INPUT_MOVE_RIGHT);
-        lastKeysPressed_ |= KEY_RIGHT;
-        moved = true;
+    if (keyJustPressed | (keyPressed && isTimeToMove)) {
+        game_->processInput(input);
+        lastKeysPressed_ |= key;
+        moveDelayTimer_->start();
     }
+}
 
-    // left
-    
-    bool moveLeftPressed = keysPressed_ & KEY_LEFT;
-    bool moveLeftWasPressed = lastKeysPressed_ & KEY_LEFT;
-    bool moveLeftJustPressed = (!moveLeftWasPressed && moveLeftPressed);
-
-    if (moveLeftJustPressed | (moveLeftPressed && isTimeToMove)) {
-        game_->processInput(INPUT_MOVE_LEFT);
-        lastKeysPressed_ |= KEY_LEFT;
-        moved = true;
-    }
-
-    // down
-    
-    bool moveDownPressed = keysPressed_ & KEY_DOWN;
-    bool moveDownWasPressed = lastKeysPressed_ & KEY_DOWN;
-    bool moveDownJustPressed = (!moveDownWasPressed && moveDownPressed);
-
-    if (moveDownJustPressed | (moveDownPressed && isTimeToMove)) {
-        game_->processInput(INPUT_MOVE_DOWN);
-        lastKeysPressed_ |= KEY_DOWN;
-        moved = true;
-    }
-
-    // if a movement was made we'll restart the timer
-    if (moved) moveDelayTimer_->start();
-
+void CinderBloxApp::checkRotationKey(int key, GameInput input) {
     // we only rotate once when a key is pressed, even if it's held down. because of this, we don't have to use the
     // timer or track what was pressed last. we have a single flag, isRotated_, to track this.
-    
-    // rotate left
-    
-    if ((keysPressed_ & KEY_ROTATE_LEFT) && !isRotated_) {
-        game_->processInput(INPUT_ROTATE_LEFT);
+
+    if ((keysPressed_ & key) && !isRotated_) {
+        game_->processInput(input);
         isRotated_ = true;
     }
+}
 
-    // rotate right
-    
-    if ((keysPressed_ & KEY_ROTATE_RIGHT) && !isRotated_) {
-        game_->processInput(INPUT_ROTATE_RIGHT);
-        isRotated_ = true;
-    }    
+void CinderBloxApp::checkKeysPressed() {
+    // check movement
+    checkMovementKey(KEY_RIGHT, INPUT_MOVE_RIGHT);
+    checkMovementKey(KEY_LEFT, INPUT_MOVE_LEFT);
+    checkMovementKey(KEY_DOWN, INPUT_MOVE_DOWN);
+
+    // check rotation
+    checkRotationKey(KEY_ROTATE_LEFT, INPUT_ROTATE_LEFT);
+    checkRotationKey(KEY_ROTATE_RIGHT, INPUT_ROTATE_RIGHT);
 }
 
 
@@ -180,7 +176,6 @@ void CinderBloxApp::keyUp(KeyEvent event) {
             isRotated_ = false;
             break;
     }
-
 }
 
 void CinderBloxApp::update() {

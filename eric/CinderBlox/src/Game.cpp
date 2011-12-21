@@ -166,6 +166,9 @@ void Game::processInput(GameInput input) {
                 activeGameState_ = STATE_SHAPE_SET;
             } else {
                 moveShape(Vec2i(0, 1));
+                
+                // a player-initiated fall should reset the timer
+                timerDrop_->start();
             }
             break;
         case INPUT_ROTATE_LEFT:
