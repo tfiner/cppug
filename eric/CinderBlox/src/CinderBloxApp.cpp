@@ -34,6 +34,9 @@ private:
     // check a specific movement key
     void checkMovementKey(int key, GameInput input);
             
+    // start the game
+    void startGame();
+    
 	GameP game_;
     
     // we note the keys currenty pressed using bitwise flags
@@ -51,10 +54,10 @@ private:
     int keysPressed_;
     
     // we need to control the rate at which pieces can move when keys are being held down
-    static const double getMoveDelay() { return 0.065f; }
+    static const double getMoveDelay() { return 0.05f; }
     
     // the initial move delay should be longer to avoid overly sensitive input
-    static const double getInitialMoveDelay() { return 0.2f; }
+    static const double getInitialMoveDelay() { return 0.15f; }
         
     TimerP moveDelayTimer_;
     double currentMoveDelay_;
@@ -91,19 +94,17 @@ void CinderBloxApp::checkMovementKey(int key, GameInput input) {
     // there's nothing to do if the key is not pressed
     if (!keyPressed) return;
     
-    // if the key was just pressed, we want to use a longer delay before moving again
-    if (keyJustPressed) currentMoveDelay_ = getInitialMoveDelay();
-
     // if the key was not just pressed we will wait until the timer has elapsed
     // ignore the initial move delay for the down key
     bool isTimeToMove = moveDelayTimer_->getSeconds() > (key == KEY_DOWN ? getMoveDelay() : currentMoveDelay_);
-    
-    // subsequent keypresses should use a shorter delay
-    if (isTimeToMove) currentMoveDelay_ = getMoveDelay();
-    
+
     if (keyJustPressed | (keyPressed && isTimeToMove)) {
         game_->processInput(input);
         lastKeysPressed_ |= key;
+        
+        // if the key was just pressed, we want to use a longer delay before moving again
+        currentMoveDelay_ = keyJustPressed ? getInitialMoveDelay() : getMoveDelay();
+        
         moveDelayTimer_->start();
     }
 }
@@ -129,6 +130,9 @@ void CinderBloxApp::checkKeysPressed() {
     checkRotationKey(KEY_ROTATE_RIGHT, INPUT_ROTATE_RIGHT);
 }
 
+void CinderBloxApp::startGame() {
+    game_->start();
+}
 
 void CinderBloxApp::keyDown(KeyEvent event) {
     switch (event.getCode()) {
@@ -148,7 +152,7 @@ void CinderBloxApp::keyDown(KeyEvent event) {
             keysPressed_ |= KEY_ROTATE_RIGHT;
             break;
         case KeyEvent::KEY_RETURN:
-            game_->start();
+            startGame();
             break;
     }
 }

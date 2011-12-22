@@ -240,17 +240,22 @@ void Game::logicActiveNextShape() {
     
     timerDrop_->start();
     
-    // we need to make sure that the setting timer is at 0 and the set timer is not running each time a new shape
-    // appears. Cinder's Timer class doesn't seem to have a way to reset the timer to 0 without also starting it, so
-    // we'll just make a new one each time.
+    // we need to make sure that the setting timer is at 0 and is not running each time a new shape appears. Cinder's
+    // Timer class doesn't seem to have a way to reset the timer to 0 without also starting it, so we'll just make a
+    // new one each time.
     timerSet_ = TimerP(new Timer());
     
     // move the shape until part of it is visible
     while (shape_->isHidden()) {
-        moveShape(Vec2i(0, 1));
+        shape_->setGridPos(shape_->getGridPos() + Vec2i(0, 1));
     }
     
-    activeGameState_ = STATE_SHAPE_FALLING;
+    // see if the game is over
+    if (!shape_->isAbleToFit()) {
+        gamePhase_ = PHASE_OVER;
+    } else {
+        activeGameState_ = STATE_SHAPE_FALLING;
+    }
 }
 
 void Game::logicActiveFalling() {
