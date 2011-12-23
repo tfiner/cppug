@@ -79,6 +79,7 @@ void Game::togglePause() {
     switch (gamePhase_) {
         case PHASE_PAUSED:
             gamePhase_ = PHASE_ACTIVE;
+            timerDrop_->start();
             break;
         case PHASE_ACTIVE:
             gamePhase_ = PHASE_PAUSED;

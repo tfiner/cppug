@@ -30,6 +30,7 @@ public:
 	void update();
 	void draw();
 	void drawNumLines();
+    void prepareSettings(Settings *settings);
 private:
     // check all keys
     void checkKeysPressed();
@@ -82,6 +83,10 @@ CinderBloxApp::CinderBloxApp():
     isRotated_(false)
 {
 	
+}
+
+void CinderBloxApp::prepareSettings(Settings *settings) {
+    settings->setWindowSize(400, 480);
 }
 
 void CinderBloxApp::setup() {
@@ -160,6 +165,9 @@ void CinderBloxApp::keyDown(KeyEvent event) {
             break;
         case KeyEvent::KEY_RETURN:
             startGame();
+            break;
+        case KeyEvent::KEY_SPACE:
+            game_->togglePause();
             break;
     }
 }
