@@ -13,12 +13,14 @@ using namespace ci;
 GameP Game::INSTANCE;
 
 Game::Game():
-    gamePhase_(PHASE_OVER),
+    gamePhase_(PHASE_NONE),
     activeGameState_(STATE_NEXT_SHAPE),
     well_(new Well()),
     timerDrop_(new Timer()),
-    timerClearing_(new Timer()),
-    timerFlash_(new Timer())
+    timerClearingAnimation_(new Timer()),
+    timerClearingFlash_(new Timer()),
+    timerLastBlockAnimation_(new Timer()),
+    timerLastBlockFlash_(new Timer())
 {
 
 }
@@ -56,10 +58,19 @@ void Game::createNextShape() {
 
 void Game::start() {
     level_ = 7;
+    well_->clearBlocks();
     determineCurrentSpeed();
     gamePhase_ = PHASE_ACTIVE;
     createNextShape();
     activeGameState_ = STATE_NEXT_SHAPE;
+}
+
+void Game::stop() {
+    
+}
+
+bool Game::isRunning() {
+    return gamePhase_ != PHASE_OVER;
 }
 
 void Game::togglePause() {
@@ -76,8 +87,8 @@ void Game::togglePause() {
     }
 }
 
-void Game::stop() {
-    
+bool Game::isPaused() {
+    return gamePhase_ == PHASE_PAUSED;
 }
 
 void Game::moveShape(Vec2i motion) {
@@ -87,7 +98,7 @@ void Game::moveShape(Vec2i motion) {
     // if the shape doesn't fit here, undo the move
     if (!shape_->isAbleToFit()) {
         shape_->setGridPos(shape_->getGridPos() - motion);
-    }    
+    }
 }
 
 void Game::checkState() {
@@ -198,6 +209,9 @@ void Game::gameLogic() {
         case PHASE_ACTIVE:
             logicActive();
             break;
+        case PHASE_NONE:
+            // do nothing
+            break;
     }
 }
 
@@ -206,7 +220,14 @@ void Game::logicPaused() {
 }
 
 void Game::logicOver() {
-    
+    if (timerLastBlockAnimation_->getSeconds() < getLastBlockAnimationDuration()) {
+        if (timerLastBlockFlash_->getSeconds() > getLastBlockFlashDuration()) {
+            shape_->setVisible(!shape_->isVisible());
+            timerLastBlockFlash_->start();
+        }
+    } else {
+        gamePhase_ = PHASE_NONE;
+    }
 }
 
 void Game::logicActive() {
@@ -253,6 +274,9 @@ void Game::logicActiveNextShape() {
     // see if the game is over
     if (!shape_->isAbleToFit()) {
         gamePhase_ = PHASE_OVER;
+        shape_->setVisible(false);
+        timerLastBlockAnimation_->start();
+        timerLastBlockFlash_->start();
     } else {
         activeGameState_ = STATE_SHAPE_FALLING;
     }
@@ -283,8 +307,8 @@ void Game::logicActiveSet() {
     shape_.reset();
     
     if (completedLines_.size() > 0) {
-        timerClearing_->start();
-        timerFlash_->start();
+        timerClearingAnimation_->start();
+        timerClearingFlash_->start();
         activeGameState_ = STATE_CLEARING_LINES;
     } else {
         activeGameState_ = STATE_NEXT_SHAPE;
@@ -292,7 +316,7 @@ void Game::logicActiveSet() {
 }
 
 void Game::logicActiveClearingLines() {
-    if (timerClearing_->getSeconds() > getClearingSpeed()) {
+    if (timerClearingAnimation_->getSeconds() > getClearingAnimationDuration()) {
         std::list<int>::iterator i = completedLines_.begin();
         while (i != completedLines_.end()) {
             well_->removeRow((*i));
@@ -301,14 +325,14 @@ void Game::logicActiveClearingLines() {
         
         activeGameState_ = STATE_NEXT_SHAPE;
     } else {
-        if (timerFlash_->getSeconds() > getFlashSpeed()) {
+        if (timerClearingFlash_->getSeconds() > getClearingFlashDuration()) {
             std::list<int>::iterator i = completedLines_.begin();
             while (i != completedLines_.end()) {
                 well_->toggleRowVisibility((*i));
                 ++i;
             }
             
-            timerFlash_->start();
+            timerClearingFlash_->start();
         }
     }
 }

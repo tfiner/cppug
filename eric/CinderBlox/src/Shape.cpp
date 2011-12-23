@@ -19,7 +19,8 @@ Shape::Shape(WellP well, int size, Color color):
     size_(size),
     color_(color),
     gridPos_(0, 0),
-    isInPlay_(false)
+    isInPlay_(false),
+    isVisible_(true)
 {
     
 }
@@ -74,6 +75,12 @@ void Shape::init() {
 void Shape::update() {
     updatePixelPos();
     DrawableContainer::update();
+}
+
+void Shape::draw() {
+    if (isVisible_) {
+        DrawableContainer::draw();
+    }
 }
 
 Vec2i Shape::getGridPos() {
@@ -235,6 +242,14 @@ void Shape::putInWell() {
             }
         }
     }
+}
+
+void Shape::setVisible(bool isVisible) {
+    isVisible_ = isVisible;
+}
+
+bool Shape::isVisible() {
+    return isVisible_;
 }
 
 //////

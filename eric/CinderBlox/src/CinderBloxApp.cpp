@@ -37,6 +37,10 @@ private:
     // start the game
     void startGame();
     
+    // the game is over
+    void endGame();
+    
+    // a reference to the game singleton
 	GameP game_;
     
     // we note the keys currenty pressed using bitwise flags
@@ -57,7 +61,7 @@ private:
     static const double getMoveDelay() { return 0.05f; }
     
     // the initial move delay should be longer to avoid overly sensitive input
-    static const double getInitialMoveDelay() { return 0.15f; }
+    static const double getInitialMoveDelay() { return 0.125f; }
         
     TimerP moveDelayTimer_;
     double currentMoveDelay_;
@@ -132,6 +136,20 @@ void CinderBloxApp::checkKeysPressed() {
 
 void CinderBloxApp::startGame() {
     game_->start();
+}
+
+void CinderBloxApp::endGame() {
+//    if (gameRunning_) {
+//        timerFlashing_->start();
+//        timerFlash_->start();
+//        gameRunning_ = false;
+//    } else {
+//        if (timerFlashing_->getSeconds() < getFlashingDuration()) {
+//            if (timerFlash_->getSeconds() > getFlashDuration()) {
+//                
+//            }
+//        }
+//    }
 }
 
 void CinderBloxApp::keyDown(KeyEvent event) {

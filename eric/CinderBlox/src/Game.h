@@ -39,8 +39,13 @@ namespace cb {
 	 * The various phases the game can be in.
 	 */
 	enum GamePhase {
+        /**
+         * The game is not running at all
+         */
+        PHASE_NONE,
+        
 		/**
-		 * The game is not being played
+		 * The game just ended
 		 */
 		PHASE_OVER,
 		
@@ -108,14 +113,24 @@ namespace cb {
         void start();
         
         /**
+         * End the game
+         */
+        void stop();
+
+        /**
+         * Returns true if the game is not over
+         */
+        bool isRunning();
+        
+        /**
          * Pause / unpause
          */
         void togglePause();
         
         /**
-         * End the game
+         * Returns true if the game is paused
          */
-        void stop();
+        bool isPaused();
         
         /**
          * Send control input to the game
@@ -190,11 +205,17 @@ namespace cb {
         static const double getSettingMaxSec() { return 1.0f; }
         
         // how long we will animate the clearing of lines
-        static const double getClearingSpeed() { return 0.8f; }
+        static const double getClearingAnimationDuration() { return 0.8f; }
         
         // how long we will flash a line when clearing it
-        static const double getFlashSpeed() { return 0.2f; }
+        static const double getClearingFlashDuration() { return 0.2f; }
+
+        // how long we will animate the last block flashing
+        static const double getLastBlockAnimationDuration() { return 1.0f; }
         
+        // how long we will each flash of the last block lasts
+        static const double getLastBlockFlashDuration() { return 0.1f; }        
+
         // how fast Shapes are currently falling
         double currentSpeed_;
         
@@ -208,10 +229,16 @@ namespace cb {
         TimerP timerSet_;
         
         // the timer we use to animate the clearing of lines
-        TimerP timerClearing_;
+        TimerP timerClearingAnimation_;
         
         // the timer we use for each individual flash when clearing lines
-        TimerP timerFlash_;
+        TimerP timerClearingFlash_;
+        
+        // the timer we use to animate the last block
+        TimerP timerLastBlockAnimation_;
+        
+        // the timer we use for each individual flash of the last block
+        TimerP timerLastBlockFlash_;
         
         std::list<int> completedLines_;
 	};

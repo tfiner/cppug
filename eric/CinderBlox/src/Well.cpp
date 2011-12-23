@@ -6,9 +6,12 @@
 #include "cinder/Vector.h"
 #include "cinder/Rect.h"
 
+//#include <boost/checked_delete.hpp>
+
 using namespace cb;
 using namespace ci;
 using namespace gl;
+using namespace boost;
 
 Well::Well():
     pixelPosUL_(X_OFFSET, Y_OFFSET),
@@ -36,8 +39,11 @@ BlockP Well::getBlockAt(Vec2i gridPos) {
 void Well::clearBlocks() {
 	DrawableContainer::clearDrawables();
 	
-	// TODO: clear array
-	
+    for (int row = 0; row < WELL_ROWS; row++) {
+        for (int col = 0; col < WELL_COLS; col++) {
+            blocks_[row][col].reset();
+        }    
+    }
 }
 
 bool Well::isRowFull(int row) {

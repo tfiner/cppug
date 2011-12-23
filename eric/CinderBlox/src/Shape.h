@@ -82,7 +82,11 @@ namespace cb {
          */
         bool isInPlay();
                 
+        void setVisible(bool isVisible);
+        bool isVisible();
+        
         virtual void update();
+        virtual void draw();
         
     protected:
         Shape(WellP well, int size, ci::Color color);
@@ -120,6 +124,8 @@ namespace cb {
         
         // put the blocks into the shape
         virtual void build() = 0;
+        
+        bool isVisible_;
 	};
 
     /**
