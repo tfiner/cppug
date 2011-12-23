@@ -135,7 +135,12 @@ namespace cb {
         /**
          * Send control input to the game
          */
-        void processInput(GameInput input);        
+        void processInput(GameInput input);  
+        
+        /**
+         * Returns the number of lines completed
+         */
+        int getNumLines();
         
 	private:
 		// this is a singleton
@@ -240,7 +245,11 @@ namespace cb {
         // the timer we use for each individual flash of the last block
         TimerP timerLastBlockFlash_;
         
+        // the rows that have been completed after a shape is placed
         std::list<int> completedLines_;
+        
+        // the total number of lines cleared
+        int numLines_;
 	};
 
 }

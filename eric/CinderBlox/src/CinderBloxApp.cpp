@@ -1,16 +1,22 @@
 
-#include "cinder/app/AppBasic.h"
-#include "cinder/gl/gl.h"
-#include "cinder/Rand.h"
-
 #include "Drawable.h"
 #include "Game.h"
+
+#include "cinder/Rand.h"
+#include "cinder/app/AppBasic.h"
+#include "cinder/gl/gl.h"
+#include "cinder/gl/Texture.h"
+
+#include "cinder/Text.h"
+
+#include <boost/lexical_cast.hpp>
 
 #include <list>
 
 using namespace ci;
 using namespace ci::app;
 using namespace cb;
+using namespace gl;
 
 typedef boost::shared_ptr<cinder::Timer> TimerP;
 
@@ -23,7 +29,7 @@ public:
     void keyUp(KeyEvent event);
 	void update();
 	void draw();
-	
+	void drawNumLines();
 private:
     // check all keys
     void checkKeysPressed();
@@ -36,9 +42,6 @@ private:
             
     // start the game
     void startGame();
-    
-    // the game is over
-    void endGame();
     
     // a reference to the game singleton
 	GameP game_;
@@ -68,7 +71,7 @@ private:
     
     // we don't allow more than one rotation per key press. because rotation happens only once per any keypress
     // we don't use the same mechanism as the other keys to control it. instead, we just use this one flag.
-    bool isRotated_;
+    bool isRotated_;  
 };
 
 CinderBloxApp::CinderBloxApp():
@@ -82,7 +85,7 @@ CinderBloxApp::CinderBloxApp():
 }
 
 void CinderBloxApp::setup() {
-	Rand::randomize();	
+	Rand::randomize();
 }
 
 void CinderBloxApp::checkMovementKey(int key, GameInput input) {
@@ -136,20 +139,6 @@ void CinderBloxApp::checkKeysPressed() {
 
 void CinderBloxApp::startGame() {
     game_->start();
-}
-
-void CinderBloxApp::endGame() {
-//    if (gameRunning_) {
-//        timerFlashing_->start();
-//        timerFlash_->start();
-//        gameRunning_ = false;
-//    } else {
-//        if (timerFlashing_->getSeconds() < getFlashingDuration()) {
-//            if (timerFlash_->getSeconds() > getFlashDuration()) {
-//                
-//            }
-//        }
-//    }
 }
 
 void CinderBloxApp::keyDown(KeyEvent event) {
@@ -207,7 +196,24 @@ void CinderBloxApp::update() {
 
 void CinderBloxApp::draw() {
 	gl::clear(Color( 0.25f, 0.25f, 0.25f ));
+    
+    drawNumLines();
+    
 	game_->draw();
+}
+
+void CinderBloxApp::drawNumLines() {
+    std::string line = "Lines: " + boost::lexical_cast<std::string>(game_->getNumLines());
+
+    gl::color(Color(1, 1, 1));
+    
+    TextLayout textNumLines;
+    textNumLines.setFont(Font("Arial", 12));
+    textNumLines.setColor(Color(1, 1, 1));
+    textNumLines.clear(Color( 0.25f, 0.25f, 0.25f ));
+    textNumLines.addLine(line);
+    
+    gl::draw(Texture(textNumLines.render()), Vec2f(10, 460));
 }
 
 // app initialization macro

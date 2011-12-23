@@ -20,7 +20,8 @@ Game::Game():
     timerClearingAnimation_(new Timer()),
     timerClearingFlash_(new Timer()),
     timerLastBlockAnimation_(new Timer()),
-    timerLastBlockFlash_(new Timer())
+    timerLastBlockFlash_(new Timer()),
+    numLines_(0)
 {
 
 }
@@ -62,6 +63,7 @@ void Game::start() {
     determineCurrentSpeed();
     gamePhase_ = PHASE_ACTIVE;
     createNextShape();
+    numLines_ = 0;
     activeGameState_ = STATE_NEXT_SHAPE;
 }
 
@@ -89,6 +91,10 @@ void Game::togglePause() {
 
 bool Game::isPaused() {
     return gamePhase_ == PHASE_PAUSED;
+}
+
+int Game::getNumLines() {
+    return numLines_;
 }
 
 void Game::moveShape(Vec2i motion) {
@@ -127,6 +133,7 @@ void Game::checkForLinesToClear() {
     for (int row = startRow; row < endRow; ++row) {
         if (well_->isRowFull(row)) {
             completedLines_.push_back(row);
+            ++numLines_;
         }
     }
 }
