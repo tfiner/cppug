@@ -29,7 +29,7 @@ public:
     void keyUp(KeyEvent event);
 	void update();
 	void draw();
-	void drawNumLines();
+	void drawStatus();
     void prepareSettings(Settings *settings);
 private:
     // check all keys
@@ -205,13 +205,14 @@ void CinderBloxApp::update() {
 void CinderBloxApp::draw() {
 	gl::clear(Color( 0.25f, 0.25f, 0.25f ));
     
-    drawNumLines();
+    drawStatus();
     
 	game_->draw();
 }
 
-void CinderBloxApp::drawNumLines() {
-    std::string line = "Lines: " + boost::lexical_cast<std::string>(game_->getNumLines());
+void CinderBloxApp::drawStatus() {
+    std::string line = "Level: " + boost::lexical_cast<std::string>(game_->getLevel() + 1)
+        + "    Lines: " + boost::lexical_cast<std::string>(game_->getNumLines());
 
     gl::color(Color(1, 1, 1));
     

@@ -21,7 +21,8 @@ Game::Game():
     timerClearingFlash_(new Timer()),
     timerLastBlockAnimation_(new Timer()),
     timerLastBlockFlash_(new Timer()),
-    numLines_(0)
+    numLines_(0),
+    level_(0)
 {
 
 }
@@ -58,12 +59,12 @@ void Game::createNextShape() {
 }
 
 void Game::start() {
-    level_ = 7;
+    level_ = 0;
+    numLines_ = 0;
     well_->clearBlocks();
     determineCurrentSpeed();
     gamePhase_ = PHASE_ACTIVE;
     createNextShape();
-    numLines_ = 0;
     activeGameState_ = STATE_NEXT_SHAPE;
 }
 
@@ -96,6 +97,10 @@ bool Game::isPaused() {
 
 int Game::getNumLines() {
     return numLines_;
+}
+
+int Game::getLevel() {
+    return level_;
 }
 
 void Game::moveShape(Vec2i motion) {
@@ -309,6 +314,9 @@ void Game::logicActiveSet() {
     // put the shape into the well and move on to the next shape
     shape_->putInWell();
     checkForLinesToClear();
+    
+    level_ = numLines_ / LINES_PER_LEVEL;
+    determineCurrentSpeed();
     
     // at this point we can't continue to hold on to this shape. it needs to be destroyed.
     // if this doesn't happen, the well won't be able to properly manipulate the blocks that once made up the shape.

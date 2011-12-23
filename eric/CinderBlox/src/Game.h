@@ -142,6 +142,11 @@ namespace cb {
          */
         int getNumLines();
         
+        /**
+         * Returns the current level
+         */
+        int getLevel();
+        
 	private:
 		// this is a singleton
 		Game();
@@ -198,6 +203,8 @@ namespace cb {
         
         // the level is used to determine the falling speed of a Shape
 		int level_;
+        
+        static const int LINES_PER_LEVEL = 10;
         
         // the minimum and maximum number of seconds a Shape will wait before moving down one more line
         static const double getSpeedMaxSec() { return 1.0f; };
