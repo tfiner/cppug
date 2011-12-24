@@ -207,14 +207,17 @@ namespace cb {
         static const int LINES_PER_LEVEL = 10;
         
         // the minimum and maximum number of seconds a Shape will wait before moving down one more line
-        static const double getSpeedMaxSec() { return 1.0f; };
+        static const double getSpeedMaxSec() { return 0.5f; };
         static const double getSpeedMinSec() { return 0.03f; };
         
         // the increase in drop speed for each level
-        static const double getSpeedIncSec() { return 0.1f; };
+        static const double getSpeedIncSec() { return 0.05f; };
         
         // the amount of time we allow a shape to be in "setting" state before it "sets"
         static const double getSettingMaxSec() { return 1.0f; }
+        
+        // the total amount of time a shape has been touching other shapes
+        double settingTime_;
         
         // how long we will animate the clearing of lines
         static const double getClearingAnimationDuration() { return 0.8f; }
@@ -225,9 +228,15 @@ namespace cb {
         // how long we will animate the last block flashing
         static const double getLastBlockAnimationDuration() { return 1.0f; }
         
-        // how long we will each flash of the last block lasts
+        // how long each flash of the last block lasts
         static const double getLastBlockFlashDuration() { return 0.1f; }        
 
+        // how long we will animate a block after it sets
+        static const double getSetAnimationDuration() { return 0.05f; }
+        
+        // how long each flash of a just-set block lasts
+        static const double getSetFlashDuration() { return 0.05f; }
+        
         // how fast Shapes are currently falling
         double currentSpeed_;
         
@@ -251,6 +260,12 @@ namespace cb {
         
         // the timer we use for each individual flash of the last block
         TimerP timerLastBlockFlash_;
+        
+        // the timer we use to animate a set block
+        TimerP timerSetAnimation_;
+        
+        // the timer we use for each individual flash of a set block
+        TimerP timerSetFlash_;
         
         // the rows that have been completed after a shape is placed
         std::list<int> completedLines_;

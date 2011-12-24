@@ -17,10 +17,13 @@ Game::Game():
     activeGameState_(STATE_NEXT_SHAPE),
     well_(new Well()),
     timerDrop_(new Timer()),
+    timerSet_(new Timer()),
     timerClearingAnimation_(new Timer()),
     timerClearingFlash_(new Timer()),
     timerLastBlockAnimation_(new Timer()),
     timerLastBlockFlash_(new Timer()),
+    timerSetAnimation_(new Timer()),
+    timerSetFlash_(new Timer()),
     numLines_(0),
     level_(0)
 {
@@ -121,10 +124,9 @@ void Game::checkState() {
             timerSet_->start();
             activeGameState_ = STATE_SHAPE_SETTING;
         }
-        // if the shape is not touching, we can move out of "setting" state. note the timer is not reset.
+        // if the shape is not touching, we can move out of "setting" state
     } else {
         if (activeGameState_ == STATE_SHAPE_SETTING) {
-            timerSet_->stop();
             activeGameState_ = STATE_SHAPE_FALLING;
         }
     }
@@ -274,10 +276,7 @@ void Game::logicActiveNextShape() {
     
     timerDrop_->start();
     
-    // we need to make sure that the setting timer is at 0 and is not running each time a new shape appears. Cinder's
-    // Timer class doesn't seem to have a way to reset the timer to 0 without also starting it, so we'll just make a
-    // new one each time.
-    timerSet_ = TimerP(new Timer());
+    settingTime_ = 0.0f;
     
     // move the shape until part of it is visible
     while (shape_->isHidden()) {
@@ -303,31 +302,50 @@ void Game::logicActiveFalling() {
     }
 }
 
-void Game::logicActiveSetting() {    
+void Game::logicActiveSetting() {
+    // we need to do this because the timer doesn't have a pause mechanism. we track the total time separately.
+    settingTime_ += timerSet_->getSeconds();
+    timerSet_->start();
+    
     // if the setting timer has been exceeded then we have to set the shape
-    if (timerSet_->getSeconds() > getSettingMaxSec()) {
+    if (settingTime_ > getSettingMaxSec()) {
         activeGameState_ = STATE_SHAPE_SET;
     }
 }
 
 void Game::logicActiveSet() {
-    // put the shape into the well and move on to the next shape
-    shape_->putInWell();
-    checkForLinesToClear();
+    if (timerSetAnimation_->isStopped()) {
+        timerSetAnimation_->start();
+        timerSetFlash_->start();
+        shape_->setVisible(false);
+    }
     
-    level_ = numLines_ / LINES_PER_LEVEL;
-    determineCurrentSpeed();
-    
-    // at this point we can't continue to hold on to this shape. it needs to be destroyed.
-    // if this doesn't happen, the well won't be able to properly manipulate the blocks that once made up the shape.
-    shape_.reset();
-    
-    if (completedLines_.size() > 0) {
-        timerClearingAnimation_->start();
-        timerClearingFlash_->start();
-        activeGameState_ = STATE_CLEARING_LINES;
+    if (timerSetAnimation_->getSeconds() < getSetAnimationDuration()) {
+        if (timerSetFlash_->getSeconds() > getSetFlashDuration()) {
+            shape_->setVisible(!shape_->isVisible());
+            timerSetFlash_->start();
+        }
     } else {
-        activeGameState_ = STATE_NEXT_SHAPE;
+        timerSetAnimation_->stop();
+        
+        // put the shape into the well and move on to the next shape
+        shape_->putInWell();
+        checkForLinesToClear();
+        
+        level_ = numLines_ / LINES_PER_LEVEL;
+        determineCurrentSpeed();
+        
+        // at this point we can't continue to hold on to this shape. it needs to be destroyed.
+        // if this doesn't happen, the well won't be able to properly manipulate the blocks that once made up the shape.
+        shape_.reset();
+        
+        if (completedLines_.size() > 0) {
+            timerClearingAnimation_->start();
+            timerClearingFlash_->start();
+            activeGameState_ = STATE_CLEARING_LINES;
+        } else {
+            activeGameState_ = STATE_NEXT_SHAPE;
+        }        
     }
 }
 

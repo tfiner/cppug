@@ -50,7 +50,8 @@ bool Well::isRowFull(int row) {
     if (!isInBounds(Vec2i(0, row))) return false;
         
     for (int col = 0; col < WELL_COLS; col++) {
-        if (!blocks_[row][col]) return false;
+        BlockP block = blocks_[row][col];
+        if (!block || block->isStuck()) return false;
     }
     
     return true;
