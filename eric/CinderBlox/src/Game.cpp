@@ -7,6 +7,8 @@
 #include "cinder/Timer.h"
 #include "cinder/Vector.h"
 
+#include <math.h>
+
 using namespace cb;
 using namespace ci;
 
@@ -217,7 +219,7 @@ void Game::processInput(GameInput input) {
 }
 
 void Game::determineCurrentSpeed() {
-    double increase = (level_ - 1) * getSpeedIncSec();
+    double increase = sqrt(level_) * getSpeedIncSec();
     double speed = getSpeedMaxSec() - increase;
     if (speed < getSpeedMinSec()) speed = getSpeedMinSec();
     currentSpeed_ = speed;

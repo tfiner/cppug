@@ -224,7 +224,7 @@ namespace cb {
         static const double getSpeedMinSec() { return 0.03f; };
         
         // the increase in drop speed for each level
-        static const double getSpeedIncSec() { return 0.05f; };
+        static const double getSpeedIncSec() { return 0.125f; };
         
         // the amount of time we allow a shape to be in "setting" state before it "sets"
         static const double getSettingMaxSec() { return 1.0f; }
