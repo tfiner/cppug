@@ -35,6 +35,14 @@ namespace cb {
         INPUT_ROTATE_RIGHT
     };
     
+    /**
+     * The various modes of play
+     */
+    enum GameMode {
+        MODE_CLASSIC,
+        MODE_CINDER
+    };
+    
 	/**
 	 * The various phases the game can be in.
 	 */
@@ -110,7 +118,7 @@ namespace cb {
         /**
          * Start a new game
          */
-        void start();
+        void start(GameMode mode);
         
         /**
          * End the game
@@ -157,6 +165,11 @@ namespace cb {
          */
         WellP getWell();
         
+        /**
+         * Returns the current mode of play
+         */
+        GameMode getGameMode();
+        
 	private:
 		// this is a singleton
 		Game();
@@ -197,6 +210,9 @@ namespace cb {
         
         // construct the next shape that will be in play
         void createNextShape();
+        
+        // the mode of play
+        GameMode mode_;
         
 		// the game owns a Well
 		WellP well_;

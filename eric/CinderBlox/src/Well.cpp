@@ -52,7 +52,6 @@ bool Well::isRowFull(int row) {
     for (int col = 0; col < WELL_COLS; col++) {
         BlockP block = blocks_[row][col];
         if (!block || block->isStuck()) return false;
-        //if (!block) return false;
     }
     
     return true;

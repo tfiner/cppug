@@ -64,7 +64,8 @@ void Game::createNextShape() {
     nextShape_->setGridPos(Vec2i(Well::WELL_COLS + 1, Well::WELL_HIDDEN));
 }
 
-void Game::start() {
+void Game::start(GameMode mode) {
+    mode_ = mode;
     level_ = 0;
     numLines_ = 0;
     shapeCount_ = 0;
@@ -116,6 +117,10 @@ int Game::getShapeCount() {
 
 WellP Game::getWell() {
     return well_;
+}
+
+GameMode Game::getGameMode() {
+    return mode_;
 }
 
 void Game::moveShape(Vec2i motion) {

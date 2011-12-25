@@ -240,7 +240,7 @@ void Shape::putInWell() {
             if (block) {
                 Vec2i gridPos = gridPos_ + Vec2i(x, y);
                 well_->addBlock(gridPos, block);
-                block->set();
+                if (game_->getGameMode() == MODE_CINDER) block->set();
             }
         }
     }

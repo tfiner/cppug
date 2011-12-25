@@ -42,7 +42,7 @@ private:
     void checkMovementKey(int key, GameInput input);
             
     // start the game
-    void startGame();
+    void startGame(GameMode mode);
     
     // a reference to the game singleton
 	GameP game_;
@@ -142,8 +142,8 @@ void CinderBloxApp::checkKeysPressed() {
     checkRotationKey(KEY_ROTATE_RIGHT, INPUT_ROTATE_RIGHT);
 }
 
-void CinderBloxApp::startGame() {
-    game_->start();
+void CinderBloxApp::startGame(GameMode mode) {
+    game_->start(mode);
 }
 
 void CinderBloxApp::keyDown(KeyEvent event) {
@@ -164,7 +164,10 @@ void CinderBloxApp::keyDown(KeyEvent event) {
             keysPressed_ |= KEY_ROTATE_RIGHT;
             break;
         case KeyEvent::KEY_RETURN:
-            startGame();
+            startGame(MODE_CLASSIC);
+            break;
+        case KeyEvent::KEY_TAB:
+            startGame(MODE_CINDER);
             break;
         case KeyEvent::KEY_SPACE:
             game_->togglePause();
