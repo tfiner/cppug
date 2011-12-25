@@ -16,6 +16,9 @@ namespace cb {
     class Block;
     typedef boost::shared_ptr<Block> BlockP;
     
+    class Game;
+	typedef boost::shared_ptr<Game> GameP;
+
     class Well;
     typedef boost::shared_ptr<Well> WellP;
     
@@ -41,8 +44,8 @@ namespace cb {
         
         virtual ~Shape() {}
         
-        static ShapeP getRandomShape(WellP well);
-        static ShapeP getShape(ShapeType type, WellP well);
+        static ShapeP getRandomShape();
+        static ShapeP getShape(ShapeType type);
         
         ci::Vec2i getGridPos();
         void setGridPos(ci::Vec2i gridPos);
@@ -89,7 +92,10 @@ namespace cb {
         virtual void draw();
         
     protected:
-        Shape(WellP well, int size, ci::Color color);
+        Shape(int size, ci::Color color);
+        
+        // a reference to the game singleon
+        GameP game_;
         
         // the well into which we will place our blocks
         WellP well_;
@@ -137,7 +143,7 @@ namespace cb {
      */
     class ShapeI : public Shape {
     public:
-        ShapeI(WellP well);
+        ShapeI();
     private:
         virtual void build();
     };
@@ -149,7 +155,7 @@ namespace cb {
      */
     class ShapeO : public Shape {
     public:
-        ShapeO(WellP well);
+        ShapeO();
     private:
         virtual void build();
     };
@@ -162,7 +168,7 @@ namespace cb {
      */
     class ShapeT : public Shape {
     public:
-        ShapeT(WellP well);
+        ShapeT();
     private:
         virtual void build();
     };
@@ -175,7 +181,7 @@ namespace cb {
      */
     class ShapeJ : public Shape {
     public:
-        ShapeJ(WellP well);
+        ShapeJ();
     private:
         virtual void build();
     };
@@ -188,7 +194,7 @@ namespace cb {
      */
     class ShapeL : public Shape {
     public:
-        ShapeL(WellP well);
+        ShapeL();
     private:
         virtual void build();
     };
@@ -201,7 +207,7 @@ namespace cb {
      */
     class ShapeZ : public Shape {
     public:
-        ShapeZ(WellP well);
+        ShapeZ();
     private:
         virtual void build();
     };
@@ -214,7 +220,7 @@ namespace cb {
      */
     class ShapeS : public Shape {
     public:
-        ShapeS(WellP well);
+        ShapeS();
     private:
         virtual void build();
     };

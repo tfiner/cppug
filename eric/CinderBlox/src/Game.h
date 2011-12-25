@@ -147,6 +147,16 @@ namespace cb {
          */
         int getLevel();
         
+        /**
+         * Returns the number of shapes that have fallen this game
+         */
+        int getShapeCount();
+        
+        /**
+         * Returns a reference to the well the game owns
+         */
+        WellP getWell();
+        
 	private:
 		// this is a singleton
 		Game();
@@ -197,6 +207,9 @@ namespace cb {
         // the next shape that will be in play
         ShapeP nextShape_;
 		
+        // the number of shapes that have fallen this game
+        int shapeCount_;
+        
 		// our current phase and state
 		GamePhase gamePhase_;
 		ActiveGameState activeGameState_;

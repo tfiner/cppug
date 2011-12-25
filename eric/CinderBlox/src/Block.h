@@ -6,15 +6,12 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Vector.h"
 
-namespace cinder {
-    class Timer;    
-}
-
 namespace cb {
 
-    typedef boost::shared_ptr<cinder::Timer> TimerP;
-    
-    /**
+	class Game;
+	typedef boost::shared_ptr<Game> GameP;
+
+   /**
      * A single block.
      */
 	class Block : public Drawable {
@@ -49,14 +46,19 @@ namespace cb {
          */
         bool isStuck();
         
-        
 	private:
-        // how long a block takes to become "stuck"
-        static const double getStuckTime() { return 30.0f; }
+        // we need a reference to the game singleton to ask about the number of shapes that have fallen
+        GameP game_;
         
-        // tracks how close the block is to being stuck
-        TimerP timerStuck_;
+        // how many shapes can fall before this block becomes "stuck"
+        static const int STUCK_THRESHOLD = 20;
+        
+        // the number of shapes that had been played when the block was set
+        int shapeCountWhenSet_;
 
+        // how wide the border is when a block is stuck (its visual appearance is changed)
+        static const int STUCK_BORDER = 7;
+        
         ci::Vec2i pos_;
         ci::Color color_;
         bool isVisible_;

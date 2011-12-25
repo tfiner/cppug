@@ -3,6 +3,7 @@
 
 #include "Block.h"
 #include "Well.h"
+#include "Game.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/Rand.h"
@@ -14,48 +15,48 @@ using namespace ci;
 // Shape
 //////////
 
-Shape::Shape(WellP well, int size, Color color):
-    well_(well),
+Shape::Shape(int size, Color color):
     size_(size),
     color_(color),
     gridPos_(0, 0),
     isInPlay_(false),
     isVisible_(true)
 {
-    
+    game_ = Game::getInstance();
+    well_ = game_->getWell();
 }
 
-ShapeP Shape::getRandomShape(WellP well) {
+ShapeP Shape::getRandomShape() {
     Rand::randomize();
     int x = Rand::randInt(7);
     ShapeType type = (ShapeType)x;
-    return getShape(type, well);
+    return getShape(type);
 }
 
-ShapeP Shape::getShape(ShapeType type, WellP well) {
+ShapeP Shape::getShape(ShapeType type) {
     ShapeP shape;
     
     switch (type) {
         case SHAPE_I:
-            shape = ShapeP(new ShapeI(well));
+            shape = ShapeP(new ShapeI());
             break;
         case SHAPE_O:
-            shape = ShapeP(new ShapeO(well));
+            shape = ShapeP(new ShapeO());
             break;
         case SHAPE_T:
-            shape = ShapeP(new ShapeT(well));
+            shape = ShapeP(new ShapeT());
             break;
         case SHAPE_J:
-            shape = ShapeP(new ShapeJ(well));
+            shape = ShapeP(new ShapeJ());
             break;
         case SHAPE_L:
-            shape = ShapeP(new ShapeL(well));
+            shape = ShapeP(new ShapeL());
             break;
         case SHAPE_Z:
-            shape = ShapeP(new ShapeZ(well));
+            shape = ShapeP(new ShapeZ());
             break;
         case SHAPE_S:
-            shape = ShapeP(new ShapeS(well));
+            shape = ShapeP(new ShapeS());
             break;
     }
     
@@ -257,8 +258,8 @@ bool Shape::isVisible() {
 // I
 //////
 
-ShapeI::ShapeI(WellP well):
-Shape(well, 4, Color(0.98f, 0.51f, 0.84f)) {
+ShapeI::ShapeI():
+Shape(4, Color(0.98f, 0.51f, 0.84f)) {
     
 }
 
@@ -275,8 +276,8 @@ void ShapeI::build() {
 // O
 //////
 
-ShapeO::ShapeO(WellP well):
-Shape(well, 2, Color(0.84f, 1.0f, 0.5f)) {
+ShapeO::ShapeO():
+Shape(2, Color(0.84f, 1.0f, 0.5f)) {
     
 }
 
@@ -295,8 +296,8 @@ void ShapeO::build() {
 // T
 //////
 
-ShapeT::ShapeT(WellP well):
-Shape(well, 3, Color(0.53f, 1.0f, 0.84f)) {
+ShapeT::ShapeT():
+Shape(3, Color(0.53f, 1.0f, 0.84f)) {
     
 }
 
@@ -318,8 +319,8 @@ void ShapeT::build() {
 // J
 //////
 
-ShapeJ::ShapeJ(WellP well):
-Shape(well, 3, Color(0.83f, 0.48f, 0.99f)) {
+ShapeJ::ShapeJ():
+Shape(3, Color(0.83f, 0.48f, 0.99f)) {
     
 }
 
@@ -341,8 +342,8 @@ void ShapeJ::build() {
 // L
 //////
 
-ShapeL::ShapeL(WellP well):
-Shape(well, 3, Color(0.51f, 1.0f, 0.49f)) {
+ShapeL::ShapeL():
+Shape(3, Color(0.51f, 1.0f, 0.49f)) {
     
 }
 
@@ -364,8 +365,8 @@ void ShapeL::build() {
 // Z
 //////
 
-ShapeZ::ShapeZ(WellP well):
-Shape(well, 3, Color(0.24f, 0.57f, 0.99f)) {
+ShapeZ::ShapeZ():
+Shape(3, Color(0.24f, 0.57f, 0.99f)) {
     
 }
 
@@ -389,8 +390,8 @@ void ShapeZ::build() {
 // S
 //////
 
-ShapeS::ShapeS(WellP well):
-Shape(well, 3, Color(0.58f, 0.0f, 0.99f)) {
+ShapeS::ShapeS():
+Shape(3, Color(0.58f, 0.0f, 0.99f)) {
     
 }
 

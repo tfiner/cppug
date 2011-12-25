@@ -25,7 +25,8 @@ Game::Game():
     timerSetAnimation_(new Timer()),
     timerSetFlash_(new Timer()),
     numLines_(0),
-    level_(0)
+    level_(0),
+    shapeCount_(0)
 {
 
 }
@@ -57,13 +58,14 @@ void Game::draw() {
 }
 
 void Game::createNextShape() {
-    nextShape_ = Shape::getRandomShape(well_);
+    nextShape_ = Shape::getRandomShape();
     nextShape_->setGridPos(Vec2i(Well::WELL_COLS + 1, Well::WELL_HIDDEN));
 }
 
 void Game::start() {
     level_ = 0;
     numLines_ = 0;
+    shapeCount_ = 0;
     well_->clearBlocks();
     determineCurrentSpeed();
     gamePhase_ = PHASE_ACTIVE;
@@ -104,6 +106,14 @@ int Game::getNumLines() {
 
 int Game::getLevel() {
     return level_;
+}
+
+int Game::getShapeCount() {
+    return shapeCount_;
+}
+
+WellP Game::getWell() {
+    return well_;
 }
 
 void Game::moveShape(Vec2i motion) {
@@ -268,6 +278,7 @@ void Game::logicActive() {
 }
 
 void Game::logicActiveNextShape() {
+    ++shapeCount_;
     shape_ = nextShape_;
     createNextShape();
     

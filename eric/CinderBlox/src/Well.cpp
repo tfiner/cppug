@@ -52,6 +52,7 @@ bool Well::isRowFull(int row) {
     for (int col = 0; col < WELL_COLS; col++) {
         BlockP block = blocks_[row][col];
         if (!block || block->isStuck()) return false;
+        //if (!block) return false;
     }
     
     return true;
@@ -60,7 +61,7 @@ bool Well::isRowFull(int row) {
 void Well::toggleRowVisibility(int row) {
     for (int col = 0; col < WELL_COLS; col++) {
         BlockP block = blocks_[row][col];
-        if (block) {
+        if (block && !block->isStuck()) {
             block->setVisible(!block->isVisible());
         }
     }    
@@ -74,11 +75,11 @@ void Well::removeRow(int row) {
     for (--row; row >= 0; --row) {
         for (int col = 0; col < WELL_COLS; col++) {
             BlockP block = blocks_[row][col];
-            blocks_[row + 1][col] = block;
+            BlockP blockBelow = blocks_[row + 1][col];
             
-            if (block) {
-                block->setPixelPos(getPixelPos(Vec2i(col, row + 1)));
-            }
+            blockBelow = block;
+            blocks_[row + 1][col] = block;   
+            if (block) block->setPixelPos(getPixelPos(Vec2i(col, row + 1)));
         }
     }
 }
@@ -108,6 +109,7 @@ bool Well::isInVisibleArea(ci::Vec2i gridPos) {
 
 void Well::removeBlock(Vec2i gridPos) {
     assert (isInBounds(gridPos));
-    if (!getBlockAt(gridPos)) return;
-	DrawableContainer::removeDrawable(blocks_[gridPos.y][gridPos.x]);
+    BlockP block = getBlockAt(gridPos);
+    if (!block || block->isStuck()) return;
+	DrawableContainer::removeDrawable(block);
 }
